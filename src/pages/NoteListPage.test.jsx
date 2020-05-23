@@ -1,19 +1,20 @@
-import {
-    act,
-    cleanup,
-    render,
-    screen,
-    fireEvent,
-    waitFor,
-    waitForElementToBeRemoved
-} from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import NoteListPage from './NoteListPage';
-import { getSource } from '../store/source-manager';
+import { ipcRenderer } from 'electron';
 
 jest.mock('../store/source-manager');
+jest.mock(
+    'electron',
+    () => {
+        return {
+            ipcRenderer: { invoke: jest.fn() }
+        };
+    },
+    { virtual: true }
+);
 
 beforeAll(cleanup);
 beforeEach(() => {
@@ -124,13 +125,31 @@ it('should create a new note', async () => {
     await waitFor(() => expect(props.source.getNotes).toHaveBeenCalledTimes(2));
 });
 
-it('should delete an existing note', async () => {
+it('should delete an existing note when user allows it', async () => {
+    ipcRenderer.invoke.mockImplementationOnce(() => {
+        return true;
+    });
+
     fireEvent.click(screen.getByText('note title'));
     await waitFor(() => screen.getByRole('button', { name: 'delete' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'delete' }));
+    await waitFor(() => expect(ipcRenderer.invoke).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(props.source.removeNote).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(props.source.getNotes).toHaveBeenCalledTimes(2));
+});
+
+it('should cancel note deletion if user does not allow it', async () => {
+    ipcRenderer.invoke.mockImplementationOnce(() => {
+        return false;
+    });
+
+    fireEvent.click(screen.getByText('note title'));
+    await waitFor(() => screen.getByRole('button', { name: 'delete' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'delete' }));
+    await waitFor(() => expect(ipcRenderer.invoke).toHaveBeenCalledTimes(1));
+    expect(props.source.removeNote).not.toHaveBeenCalled();
 });
 
 it('should update fetch notes after existing note update', async () => {
