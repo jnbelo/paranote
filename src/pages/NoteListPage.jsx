@@ -13,8 +13,10 @@ import {
     NotesListItem,
     Toolbar
 } from './NoteListPage.styles';
+import { ipcRenderer } from 'electron';
 
 const NoteListPage = ({ source }) => {
+    const UNTITLED_NOTE = '(Untitled Note)';
     const [notes, setNotes] = useState([]);
     const [selectedNote, setSelectedNote] = useState();
 
@@ -62,12 +64,21 @@ const NoteListPage = ({ source }) => {
     const handleDeleteNote = async () => {
         if (selectedNote) {
             try {
-                await source.removeNote(selectedNote.id);
-                setNotes(await source.getNotes());
-                setSelectedNote(null);
-                log.info(
-                    `Deleted note [noteId: ${selectedNote.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`
-                );
+                const result = await ipcRenderer.invoke('open-ok-cancel-box', {
+                    type: 'question',
+                    title: 'Delete note',
+                    message: `Do you want to delete note '${selectedNote.title || UNTITLED_NOTE}'?`
+                });
+                if (result === true) {
+                    await source.removeNote(selectedNote.id);
+                    setNotes(await source.getNotes());
+                    setSelectedNote(null);
+                    log.info(
+                        `Deleted note [noteId: ${selectedNote.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`
+                    );
+                } else {
+                    log.debug('Cancelled note deletion.');
+                }
             } catch (error) {
                 log.error(
                     `Unable to delete note [noteId: ${selectedNote.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`,
@@ -100,7 +111,7 @@ const NoteListPage = ({ source }) => {
                     onSelectionChange={handleNoteSelection}
                     render={(item) => (
                         <NotesListItem>
-                            <h3>{item.title || '(Untitled Note)'}</h3>
+                            <h3>{item.title || UNTITLED_NOTE}</h3>
                             <p>{item.createdAt.format('MMMM Do YYYY HH:mm')}</p>
                         </NotesListItem>
                     )}
