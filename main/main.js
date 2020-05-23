@@ -71,6 +71,18 @@ function createWindow() {
 
         return canceled ? '' : filePaths ? filePaths[0] : '';
     });
+
+    ipcMain.handle('open-ok-cancel-box', async (event, args) => {
+        const { type, title, message } = args;
+        log.debug(`Opening message box with title ${title}`);
+        const { response } = await dialog.showMessageBox(mainWindow, {
+            type,
+            title,
+            buttons: ['OK', 'Cancel'],
+            message
+        });
+        return response == 0;
+    });
 }
 
 app.on('ready', createWindow);
