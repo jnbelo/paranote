@@ -1,6 +1,7 @@
 const electron = require('electron');
 const { ipcMain, dialog } = require('electron');
 const app = electron.app;
+const shell = electron.shell;
 const BrowserWindow = electron.BrowserWindow;
 
 const log = require('electron-log');
@@ -82,6 +83,11 @@ function createWindow() {
             message
         });
         return response == 0;
+    });
+
+    mainWindow.webContents.on('new-window', function (e, url) {
+        e.preventDefault();
+        shell.openExternal(url);
     });
 }
 

@@ -10,23 +10,25 @@
     "main": "./main/main.js",
     "homepage": "./",
     "dependencies": {
+        "@jnbelo/react-marked": "file:../react-marked",
         "@journeyapps/sqlcipher": "^4.1.0",
-        "ace-builds": "^1.4.11",
+        "ace-builds": "^1.4.12",
         "electron-is-dev": "^1.1.0",
-        "electron-log": "^4.1.2",
-        "moment": "^2.25.3",
+        "electron-log": "^4.2.2",
+        "marked": "^1.1.1",
+        "moment": "^2.27.0",
         "prop-types": "^15.7.2",
         "react": "^16.13.1",
-        "react-ace": "^8.1.0",
+        "react-ace": "^9.1.2",
         "react-dom": "^16.13.1",
         "react-feather": "^2.0.8",
         "react-markdown": "^4.3.1",
         "react-router-dom": "^5.2.0",
         "react-scripts": "3.4.1",
         "sql-template-strings": "^2.2.2",
-        "sqlite": "^4.0.7",
+        "sqlite": "^4.0.12",
         "styled-components": "^5.0.1",
-        "uuid": "^8.0.0"
+        "uuid": "^8.3.0"
     },
     "scripts": {
         "postinstall": "electron-builder install-app-deps",
@@ -66,7 +68,8 @@
         "semi": true,
         "singleQuote": true,
         "trailingComma": "none",
-        "printWidth": 100
+        "printWidth": 100,
+        "endOfLine": "auto"
     },
     "browserslist": {
         "production": [
@@ -81,26 +84,26 @@
         ]
     },
     "devDependencies": {
-        "@testing-library/react-hooks": "^3.2.1",
-        "@testing-library/jest-dom": "^5.7.0",
-        "@testing-library/react": "^10.0.4",
-        "@testing-library/user-event": "^10.2.0",
-        "aws-sdk": "^2.675.0",
+        "@testing-library/jest-dom": "^5.11.2",
+        "@testing-library/react": "^10.4.8",
+        "@testing-library/react-hooks": "^3.4.1",
+        "@testing-library/user-event": "^12.1.0",
+        "aws-sdk": "^2.727.1",
         "concurrently": "^5.2.0",
         "cross-env": "^7.0.2",
-        "electron": "^8.2.5",
-        "electron-builder": "^22.6.0",
+        "electron": "^9.1.2",
+        "electron-builder": "^22.8.0",
         "electron-reload": "^1.5.0",
-        "eslint": "^6.6.0",
+        "eslint": "^7.6.0",
         "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-prettier": "^3.1.3",
+        "eslint-plugin-prettier": "^3.1.4",
         "husky": "^4.2.5",
         "jest-environment-jsdom-sixteen": "^1.0.3",
-        "node-pre-gyp": "^0.14.0",
+        "node-pre-gyp": "^0.15.0",
         "prettier": "^2.0.5",
         "react-app-rewired": "^2.1.6",
         "react-test-renderer": "^16.13.1",
-        "wait-on": "^5.0.0"
+        "wait-on": "^5.1.0"
     },
     "build": {
         "appId": "pt.starbreather.paranote",

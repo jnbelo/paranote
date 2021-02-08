@@ -1,8 +1,10 @@
+import { ipcRenderer } from 'electron';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Edit, Trash2 } from 'react-feather';
 import Button from '../components/Button';
 import List from '../components/List';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 import TitlePanel from '../components/TitlePanel';
 import log from '../utils/logging';
 import NoteEditorPage from './NoteEditorPage';
@@ -13,12 +15,12 @@ import {
     NotesListItem,
     Toolbar
 } from './NoteListPage.styles';
-import { ipcRenderer } from 'electron';
 
 const NoteListPage = ({ source }) => {
     const UNTITLED_NOTE = '(Untitled Note)';
     const [notes, setNotes] = useState([]);
     const [selectedNote, setSelectedNote] = useState();
+    const [editingMode, setEditingMode] = useState(true);
 
     useEffect(() => {
         (async () => {
@@ -97,6 +99,21 @@ const NoteListPage = ({ source }) => {
         }
     };
 
+    const handleToggleMode = () => {
+        setEditingMode(!editingMode);
+    };
+
+    let noteEditor = null;
+    if (selectedNote) {
+        if (editingMode) {
+            noteEditor = (
+                <NoteEditorPage source={source} note={selectedNote} onUpdated={handleNoteUpdate} />
+            );
+        } else {
+            noteEditor = <MarkdownRenderer note={selectedNote} />;
+        }
+    }
+
     return (
         <NoteListWrapper>
             <NotesListContainer>
@@ -122,14 +139,11 @@ const NoteListPage = ({ source }) => {
                     <Button type="icon" padding="0" onClick={handleDeleteNote} aria-label="delete">
                         <Trash2 size={18} />
                     </Button>
+                    <Button type="icon" padding="0" onClick={handleToggleMode} aria-label="toggle">
+                        <Edit size={18} />
+                    </Button>
                 </Toolbar>
-                {selectedNote && (
-                    <NoteEditorPage
-                        source={source}
-                        note={selectedNote}
-                        onUpdated={handleNoteUpdate}
-                    />
-                )}
+                {noteEditor}
             </EditorContainer>
         </NoteListWrapper>
     );
