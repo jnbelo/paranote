@@ -18,7 +18,7 @@ function createWindow() {
         height: 680,
         title: `Paranote v${app.getVersion()}`,
         icon: path.join(__dirname, '../assets/icon.png'),
-        webPreferences: { nodeIntegration: true, devTools: isDev }
+        webPreferences: { nodeIntegration: true, enableRemoteModule: true, devTools: isDev }
     });
 
     mainWindow.setMenu(null);
