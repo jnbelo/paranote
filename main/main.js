@@ -1,5 +1,6 @@
 const electron = require('electron');
 const { ipcMain, dialog } = require('electron');
+const { default: installExtension, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
@@ -12,7 +13,14 @@ log.info(`Starting Paranote up [version: ${app.getVersion()}] [dev: ${isDev}]`);
 
 let mainWindow;
 
-function createWindow() {
+async function createWindow() {
+    try {
+        const name = await installExtension(REDUX_DEVTOOLS);
+        log.info(`Added Extension:  ${name}`);
+    } catch (error) {
+        log.error('An error occurred: ', error);
+    }
+
     mainWindow = new BrowserWindow({
         width: 900,
         height: 680,

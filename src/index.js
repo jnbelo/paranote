@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import App from './App';
 import { GlobalStyle } from './index.styles.jsx';
+import store from './redux/store';
 
 const theme = {
     background: '#1e1e1e',
@@ -68,12 +70,14 @@ const theme = {
 
 ReactDOM.render(
     <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <MemoryRouter>
-                <App />
-            </MemoryRouter>
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider theme={theme}>
+                <GlobalStyle />
+                <MemoryRouter>
+                    <App />
+                </MemoryRouter>
+            </ThemeProvider>
+        </Provider>
     </React.StrictMode>,
     document.getElementById('root')
 );

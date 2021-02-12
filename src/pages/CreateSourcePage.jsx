@@ -1,19 +1,19 @@
 import path from 'path';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import log from '../utils/logging';
 import BrowseButton from '../components/BrowseButton';
 import Button from '../components/Button';
 import Form from '../components/Form';
 import FormField from '../components/FormField';
 import Label from '../components/Label';
 import TextField from '../components/TextField';
-import { addSource } from '../store/source-manager';
-import { createSource } from '../store/sqlite/database';
+import { createSource } from '../redux/sourcesSlice';
 import { ControlWrapper, PageTitle, PageWrapper } from './Page.styles';
 
 const CreateSourcePage = ({ linkClose }) => {
+    const dispatch = useDispatch();
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState('');
     const [location, setLocation] = useState('');
@@ -48,16 +48,8 @@ const CreateSourcePage = ({ linkClose }) => {
 
         if (name && location) {
             setLoading(true);
-            try {
-                const source = await createSource(name, location, password);
-                await addSource(source);
-                log.info(`Created source '${source.name}' in '${location}'`);
-                setClose(true);
-            } catch (error) {
-                log.error('Could not create a new source', error);
-                setError(error.message);
-                setLoading(false);
-            }
+            await dispatch(createSource({ location, password, name }));
+            setClose(true);
         } else {
             if (!name) {
                 setNameError('A name is required for the new source');

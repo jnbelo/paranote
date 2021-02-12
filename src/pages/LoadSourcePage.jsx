@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import BrowseButton, { OPEN_TYPE } from '../components/BrowseButton';
 import Button from '../components/Button';
@@ -7,12 +8,11 @@ import Form from '../components/Form';
 import FormField from '../components/FormField';
 import Label from '../components/Label';
 import TextField from '../components/TextField';
-import { addSource } from '../store/source-manager';
-import { loadSource } from '../store/sqlite/database';
+import { loadSource } from '../redux/sourcesSlice';
 import { ControlWrapper, PageTitle, PageWrapper } from './Page.styles';
-import log from '../utils/logging';
 
 const LoadSourcePage = ({ linkClose }) => {
+    const dispatch = useDispatch();
     const [location, setLocation] = useState('');
     const [locationError, setLocationError] = useState('');
     const [password, setPassword] = useState('');
@@ -31,17 +31,8 @@ const LoadSourcePage = ({ linkClose }) => {
 
         if (location) {
             setLoading(true);
-            try {
-                log.info(`Loading source from '${location}'`);
-                const source = await loadSource(location, password);
-                await addSource(source);
-                log.info(`Loaded source '${source.name}'`);
-                setClose(true);
-            } catch (error) {
-                log.error('Could not load the existing source', error);
-                setError(error.message);
-                setLoading(false);
-            }
+            await dispatch(loadSource({ location, password }));
+            setClose(true);
         } else {
             if (!location) {
                 setLocationError('A location is required for the new source');

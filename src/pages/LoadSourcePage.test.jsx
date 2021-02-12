@@ -3,11 +3,9 @@ import { ipcRenderer } from 'electron';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { addSource } from '../store/source-manager';
 import { loadSource } from '../store/sqlite/database';
 import LoadSourcePage from './LoadSourcePage';
 jest.mock('../store/sqlite/database');
-jest.mock('../store/source-manager');
 jest.mock(
     'electron',
     () => {
@@ -90,14 +88,8 @@ it('should invoke source load if required fields are filled', async () => {
     fireEvent.click(screen.getByText('Load'));
 
     await waitFor(() => expect(loadSource).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(addSource).toHaveBeenCalledTimes(1));
 
     expect(loadSource).toHaveBeenCalledWith(expectedLocation, expectedPassword);
-    expect(addSource).toHaveBeenCalledWith({
-        name: 'Test Name',
-        location: expectedLocation,
-        password: expectedPassword
-    });
 });
 
 it('should show error if an exception occurs', async () => {

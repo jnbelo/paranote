@@ -5,7 +5,6 @@ import { ThemeProvider } from 'styled-components';
 import NoteListPage from './NoteListPage';
 import { ipcRenderer } from 'electron';
 
-jest.mock('../store/source-manager');
 jest.mock(
     'electron',
     () => {

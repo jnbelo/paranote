@@ -3,11 +3,9 @@ import { ipcRenderer } from 'electron';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { addSource } from '../store/source-manager';
 import { createSource } from '../store/sqlite/database';
 import CreateSourcePage from './CreateSourcePage';
 jest.mock('../store/sqlite/database');
-jest.mock('../store/source-manager');
 jest.mock(
     'electron',
     () => {
@@ -93,14 +91,8 @@ it('should invoke source creation if required fields are filled', async () => {
     fireEvent.click(screen.getByText('Create'));
 
     await waitFor(() => expect(createSource).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(addSource).toHaveBeenCalledTimes(1));
 
     expect(createSource).toHaveBeenCalledWith(expectedName, expectedLocation, expectedPassword);
-    expect(addSource).toHaveBeenCalledWith({
-        name: expectedName,
-        location: expectedLocation,
-        password: expectedPassword
-    });
 });
 
 it('should fix the file extension if empty', async () => {

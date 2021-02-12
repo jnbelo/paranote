@@ -1,5 +1,6 @@
 import { default as React, useEffect, useState } from 'react';
 import { PlusCircle, Upload, X } from 'react-feather';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, withRouter } from 'react-router';
 import { SourceListContainer, SourceListItem, Wrapper } from './App.styles';
 import Button from './components/Button';
@@ -8,22 +9,12 @@ import TitlePanel from './components/TitlePanel';
 import CreateSourcePage from './pages/CreateSourcePage';
 import LoadSourcePage from './pages/LoadSourcePage';
 import NoteListPage from './pages/NoteListPage';
-import { getSources, removeSource } from './store/source-manager';
+import { removeSource, selectSources } from './redux/sourcesSlice';
 
-const { remote } = window.require('electron');
-const log = remote.require('electron-log');
-
-const App = (props) => {
-    const { location } = props;
-    const [sources, setSources] = useState([]);
+const App = () => {
+    const dispatch = useDispatch();
+    const sources = useSelector(selectSources);
     const [selectedSource, setSelectedSource] = useState();
-
-    useEffect(() => {
-        if (location.pathname === '/') {
-            log.info('Listing all sources');
-            setSources(getSources());
-        }
-    }, [location]);
 
     useEffect(() => {
         if (selectedSource && sources.indexOf(selectedSource) === -1) {
@@ -42,13 +33,7 @@ const App = (props) => {
     const handleSourceRemove = async (event, id) => {
         event.stopPropagation();
         if (id) {
-            try {
-                await removeSource(id);
-                setSources(getSources());
-                log.info(`Removed source [sourceId: ${id}]`);
-            } catch (error) {
-                log.error(`Unable to remove source [sourceId: ${id}]`, error);
-            }
+            await dispatch(removeSource({ id }));
         }
     };
 
