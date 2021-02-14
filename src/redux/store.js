@@ -1,8 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import sourcesReducer from './sourcesSlice';
+import notesReducer from './notesSlice';
 
 export default configureStore({
     reducer: {
-        sources: sourcesReducer
+        entities: combineReducers({
+            sources: sourcesReducer,
+            notes: notesReducer
+        })
     }
 });
