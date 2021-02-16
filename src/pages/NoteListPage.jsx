@@ -1,9 +1,13 @@
+import { ipcRenderer } from 'electron';
+import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Edit, Trash2 } from 'react-feather';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/Button';
 import List from '../components/List';
 import TitlePanel from '../components/TitlePanel';
+import { noteSelected, selectNotes } from '../redux/uiSlice';
 import log from '../utils/logging';
 import NoteEditorPage from './NoteEditorPage';
 import {
@@ -13,37 +17,17 @@ import {
     NotesListItem,
     Toolbar
 } from './NoteListPage.styles';
-import { ipcRenderer } from 'electron';
 
 const NoteListPage = ({ source }) => {
     const UNTITLED_NOTE = '(Untitled Note)';
-    const [notes, setNotes] = useState([]);
+    const dispatch = useDispatch();
+    const selectedSource = useSelector((state) => state.ui.selectedSource);
+    const notes = useSelector(selectNotes);
+
     const [selectedNote, setSelectedNote] = useState();
 
-    useEffect(() => {
-        (async () => {
-            log.info(
-                `Source changed, fetching notes [sourceId: ${source.id}] [sourceName: ${source.name}]`
-            );
-            try {
-                setNotes(await source.getNotes());
-            } catch (error) {
-                log.error(
-                    `Unable to get notes from source [sourceId: ${source.id}] [sourceName: ${source.name}]`,
-                    error
-                );
-            }
-
-            setSelectedNote(null);
-        })();
-    }, [source]);
-
     const handleNoteSelection = (selection) => {
-        if (selection && selection.item) {
-            setSelectedNote(selection.item);
-        } else {
-            setSelectedNote(null);
-        }
+        dispatch(noteSelected(selection && selection.item ? selection.item.id : null));
     };
 
     const handleNewNote = async () => {
@@ -97,6 +81,10 @@ const NoteListPage = ({ source }) => {
         }
     };
 
+    if (!selectedSource) {
+        return null;
+    }
+
     return (
         <NoteListWrapper>
             <NotesListContainer>
@@ -112,7 +100,7 @@ const NoteListPage = ({ source }) => {
                     render={(item) => (
                         <NotesListItem>
                             <h3>{item.title || UNTITLED_NOTE}</h3>
-                            <p>{item.createdAt.format('MMMM Do YYYY HH:mm')}</p>
+                            <p>{moment(item.createdAt).format('MMMM Do YYYY HH:mm')}</p>
                         </NotesListItem>
                     )}
                 ></List>

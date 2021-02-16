@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import * as databases from '../providers/database';
 import log from '../utils/logging';
+import { generateNoteId } from './utils';
 
 const CURRENT_VERSION = 0.1;
 

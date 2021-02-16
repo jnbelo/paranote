@@ -1,4 +1,4 @@
-import { default as React, useEffect, useState } from 'react';
+import { default as React } from 'react';
 import { PlusCircle, Upload, X } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, withRouter } from 'react-router';
@@ -10,24 +10,14 @@ import CreateSourcePage from './pages/CreateSourcePage';
 import LoadSourcePage from './pages/LoadSourcePage';
 import NoteListPage from './pages/NoteListPage';
 import { removeSource, selectSources } from './redux/sourcesSlice';
+import { sourceSelected } from './redux/uiSlice';
 
 const App = () => {
     const dispatch = useDispatch();
     const sources = useSelector(selectSources);
-    const [selectedSource, setSelectedSource] = useState();
-
-    useEffect(() => {
-        if (selectedSource && sources.indexOf(selectedSource) === -1) {
-            setSelectedSource(null);
-        }
-    }, [sources, selectedSource]);
 
     const handleSourceSelection = (selection) => {
-        if (selection && selection.item) {
-            setSelectedSource(selection.item);
-        } else {
-            setSelectedSource(null);
-        }
+        dispatch(sourceSelected(selection && selection.item ? selection.item.id : null));
     };
 
     const handleSourceRemove = async (event, id) => {
@@ -68,7 +58,7 @@ const App = () => {
             </SourceListContainer>
             <Switch>
                 <Route exact path="/">
-                    {selectedSource && <NoteListPage source={selectedSource} />}
+                    <NoteListPage />
                 </Route>
                 <Route exact path="/create-source">
                     <CreateSourcePage linkClose="/" />
