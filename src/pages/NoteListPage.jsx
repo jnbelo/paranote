@@ -1,13 +1,13 @@
 import { ipcRenderer } from 'electron';
 import moment from 'moment';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import { Edit, Trash2 } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/Button';
 import List from '../components/List';
 import TitlePanel from '../components/TitlePanel';
-import { noteSelected, selectNotes } from '../redux/uiSlice';
+import { noteSelected, selectNotes } from '../redux/slices/ui.slice';
+import { createNote, deleteNote } from '../redux/thunks/notes.thunks';
 import log from '../utils/logging';
 import NoteEditorPage from './NoteEditorPage';
 import {
@@ -18,28 +18,26 @@ import {
     Toolbar
 } from './NoteListPage.styles';
 
-const NoteListPage = ({ source }) => {
+const NoteListPage = () => {
     const UNTITLED_NOTE = '(Untitled Note)';
     const dispatch = useDispatch();
     const selectedSource = useSelector((state) => state.ui.selectedSource);
+    const selectedNote = useSelector((state) => state.ui.selectedNote);
     const notes = useSelector(selectNotes);
 
-    const [selectedNote, setSelectedNote] = useState();
-
     const handleNoteSelection = (selection) => {
-        dispatch(noteSelected(selection && selection.item ? selection.item.id : null));
+        dispatch(noteSelected(selection && selection.item ? selection.item : null));
     };
 
     const handleNewNote = async () => {
         try {
-            const note = await source.createNote({});
-            setNotes(await source.getNotes());
+            await dispatch(createNote({ source: selectedSource }));
             log.info(
-                `Created new note [noteId: ${note.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`
+                `Created new note [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`
             );
         } catch (error) {
             log.error(
-                `Unable to create new note [sourceId: ${source.id}] [sourceName: ${source.name}]`,
+                `Unable to create new note [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`,
                 error
             );
         }
@@ -54,30 +52,23 @@ const NoteListPage = ({ source }) => {
                     message: `Do you want to delete note '${selectedNote.title || UNTITLED_NOTE}'?`
                 });
                 if (result === true) {
-                    await source.removeNote(selectedNote.id);
-                    setNotes(await source.getNotes());
-                    setSelectedNote(null);
+                    await dispatch(deleteNote({ source: selectSource, note: selectedNote }));
                     log.info(
-                        `Deleted note [noteId: ${selectedNote.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`
+                        `Deleted note [noteId: ${selectedNote.id}] [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`
                     );
                 } else {
                     log.debug('Cancelled note deletion.');
                 }
             } catch (error) {
                 log.error(
-                    `Unable to delete note [noteId: ${selectedNote.id}] [sourceId: ${source.id}] [sourceName: ${source.name}]`,
+                    `Unable to delete note [noteId: ${selectedNote.id}] [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`,
                     error
                 );
             }
         } else {
-            log.warn(`No selected note [sourceId: ${source.id}] [sourceName: ${source.name}]`);
-        }
-    };
-
-    const handleNoteUpdate = async (updatedSource) => {
-        log.info(source.id);
-        if (updatedSource.id === source.id) {
-            setNotes(await source.getNotes());
+            log.warn(
+                `No selected note [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`
+            );
         }
     };
 
@@ -111,20 +102,12 @@ const NoteListPage = ({ source }) => {
                         <Trash2 size={18} />
                     </Button>
                 </Toolbar>
-                {selectedNote && (
-                    <NoteEditorPage
-                        source={source}
-                        note={selectedNote}
-                        onUpdated={handleNoteUpdate}
-                    />
-                )}
+                <NoteEditorPage />
             </EditorContainer>
         </NoteListWrapper>
     );
 };
 
-NoteListPage.propTypes = {
-    source: PropTypes.object.isRequired
-};
+NoteListPage.propTypes = {};
 
 export default NoteListPage;

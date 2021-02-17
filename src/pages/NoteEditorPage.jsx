@@ -1,13 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import AceEditor from 'react-ace';
-import TextField from '../components/TextField';
-import { EditorContent, EditorTitle, EditorWrapper } from './NoteEditorPage.styles';
 import PropTypes from 'prop-types';
+import React, { useEffect, useRef, useState } from 'react';
+import AceEditor from 'react-ace';
+import { useSelector, useDispatch } from 'react-redux';
+import TextField from '../components/TextField';
+import log from '../utils/logging';
+import { EditorContent, EditorTitle, EditorWrapper } from './NoteEditorPage.styles';
+import { updateNote } from '../redux/thunks/notes.thunks';
 import 'ace-builds/src-noconflict/mode-markdown';
 import 'ace-builds/src-noconflict/theme-twilight';
-import log from '../utils/logging';
 
-const NoteEditorPage = ({ source, note, onUpdated }) => {
+const NoteEditorPage = () => {
+    const dispatch = useDispatch();
+    const source = useSelector((state) => state.ui.selectedSource);
+    const note = useSelector((state) => state.ui.selectedNote);
+
     const [title, setTitle] = useState();
     const [content, setContent] = useState();
     const [update, setUpdate] = useState();
@@ -21,7 +27,7 @@ const NoteEditorPage = ({ source, note, onUpdated }) => {
             setTitle();
             setContent();
         }
-    }, [note]);
+    }, [source, note]);
 
     useEffect(() => {
         if (updateTimeoutRef.current != null) {
@@ -31,23 +37,22 @@ const NoteEditorPage = ({ source, note, onUpdated }) => {
         if (update) {
             updateTimeoutRef.current = setTimeout(async () => {
                 try {
-                    await update.source.updateNote(update.noteUpdate);
+                    await dispatch(updateNote({ source, note, noteUpdate: update.noteUpdate }));
                     updateTimeoutRef.current = null;
                     log.info(
-                        `Updated note [noteId: ${update.noteUpdate.id}] [sourceId: ${update.source.id}]`
+                        `Updated note [noteId: ${update.note.id}] [sourceId: ${update.source.id}]`
                     );
 
                     setUpdate(null);
-                    onUpdated(update.source);
                 } catch (error) {
                     log.error(
-                        `Unable to update note [noteId: ${update.noteUpdate.id}] [sourceId: ${update.source.id}]`,
+                        `Unable to update note [noteId: ${update.note.id}] [sourceId: ${update.source.id}]`,
                         error
                     );
                 }
             }, 750);
         }
-    }, [update, onUpdated]);
+    }, [update]);
 
     const handleTitleChange = (value) => {
         setTitle(value);
@@ -61,8 +66,9 @@ const NoteEditorPage = ({ source, note, onUpdated }) => {
 
     const scheduleUpdate = (newTitle, newContent) => {
         setUpdate({
-            source: source,
-            noteUpdate: { id: note.id, title: newTitle, content: newContent }
+            source,
+            note,
+            noteUpdate: { title: newTitle, content: newContent }
         });
     };
 
@@ -93,10 +99,6 @@ const NoteEditorPage = ({ source, note, onUpdated }) => {
     );
 };
 
-NoteEditorPage.propTypes = {
-    source: PropTypes.object.isRequired,
-    note: PropTypes.object.isRequired,
-    onUpdated: PropTypes.func.isRequired
-};
+NoteEditorPage.propTypes = {};
 
 export default NoteEditorPage;

@@ -9,7 +9,7 @@ import Form from '../components/Form';
 import FormField from '../components/FormField';
 import Label from '../components/Label';
 import TextField from '../components/TextField';
-import { createSource } from '../redux/sourcesSlice';
+import { createSource } from '../redux/thunks/sources.thunks';
 import { ControlWrapper, PageTitle, PageWrapper } from './Page.styles';
 
 const CreateSourcePage = ({ linkClose }) => {

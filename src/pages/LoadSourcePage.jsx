@@ -8,7 +8,7 @@ import Form from '../components/Form';
 import FormField from '../components/FormField';
 import Label from '../components/Label';
 import TextField from '../components/TextField';
-import { loadSource } from '../redux/sourcesSlice';
+import { loadSource } from '../redux/thunks/sources.thunks';
 import { ControlWrapper, PageTitle, PageWrapper } from './Page.styles';
 
 const LoadSourcePage = ({ linkClose }) => {

@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import sourcesReducer from './sourcesSlice';
-import notesReducer from './notesSlice';
-import uiReducer from './uiSlice';
+import sourcesReducer from './slices/sources.slice';
+import notesReducer from './slices/notes.slice';
+import uiReducer from './slices/ui.slice';
 
 export default configureStore({
     reducer: {

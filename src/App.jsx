@@ -9,15 +9,16 @@ import TitlePanel from './components/TitlePanel';
 import CreateSourcePage from './pages/CreateSourcePage';
 import LoadSourcePage from './pages/LoadSourcePage';
 import NoteListPage from './pages/NoteListPage';
-import { removeSource, selectSources } from './redux/sourcesSlice';
-import { sourceSelected } from './redux/uiSlice';
+import { selectSources } from './redux/slices/sources.slice';
+import { sourceSelected } from './redux/slices/ui.slice';
+import { removeSource } from './redux/thunks/sources.thunks';
 
 const App = () => {
     const dispatch = useDispatch();
     const sources = useSelector(selectSources);
 
     const handleSourceSelection = (selection) => {
-        dispatch(sourceSelected(selection && selection.item ? selection.item.id : null));
+        dispatch(sourceSelected(selection && selection.item ? selection.item : null));
     };
 
     const handleSourceRemove = async (event, id) => {

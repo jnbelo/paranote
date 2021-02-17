@@ -46,4 +46,14 @@ export const close = async (id) => {
     }
 };
 
+export const get = (id) => {
+    const database = databases[id];
+
+    if (!database) {
+        throw new Error(`Database ${id} was not found.`);
+    }
+
+    return database;
+};
+
 export default databases;
