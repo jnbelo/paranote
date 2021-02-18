@@ -2,7 +2,6 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
 import { createNote, deleteNote } from '../thunks/notes.thunks';
 import { createSource, loadSource, removeSource } from '../thunks/sources.thunks';
-import { generateNoteId } from '../utils';
 
 export const selectSources = createSelector(
     (state) => state.entities.sources.allIds,
@@ -29,9 +28,10 @@ export const sourcesSlice = createSlice({
             log.info(
                 `Created source '${payload.name}' with id '${payload.id}' in '${payload.location}'`
             );
+            const { notes, ...source } = payload;
             state.loading = false;
-            state.byId[payload.id] = payload;
-            state.allIds.push(payload.id);
+            state.byId[source.id] = source;
+            state.allIds.push(source.id);
         },
         [createSource.rejected]: (state, action) => {
             log.error(`Error creating source: ${action.error.message}`);
@@ -45,12 +45,10 @@ export const sourcesSlice = createSlice({
             log.info(
                 `Loaded source '${payload.name}' with id '${payload.id}' in '${payload.location}'`
             );
+            const { notes, ...source } = payload;
             state.loading = false;
-            state.byId[payload.id] = {
-                ...payload,
-                notes: payload.notes.map(({ id }) => generateNoteId(payload.id, id))
-            };
-            state.allIds.push(payload.id);
+            state.byId[source.id] = source;
+            state.allIds.push(source.id);
         },
         [loadSource.rejected]: (state, action) => {
             log.error(`Error loading source: ${action.error.message}`);
@@ -70,18 +68,6 @@ export const sourcesSlice = createSlice({
             log.error(`Error closing source: ${error.message}`);
             state.loading = false;
             state.error = error.message;
-        },
-        [createNote.fulfilled]: (state, { payload }) => {
-            const { source, note } = payload;
-            log.info(`Closed source with id '${source.id}'`);
-            state.byId[source.id].notes.push(note.id);
-        },
-        [deleteNote.fulfilled]: (state, { payload }) => {
-            const { source, note } = payload;
-            log.info(`Closed source with id '${source.id}'`);
-            state.byId[source.id].notes = state.byId[source.id].notes.filter(
-                (id) => id !== note.id
-            );
         }
     }
 });

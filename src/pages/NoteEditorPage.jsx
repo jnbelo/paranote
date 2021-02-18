@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
 import AceEditor from 'react-ace';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,11 +7,12 @@ import { EditorContent, EditorTitle, EditorWrapper } from './NoteEditorPage.styl
 import { updateNote } from '../redux/thunks/notes.thunks';
 import 'ace-builds/src-noconflict/mode-markdown';
 import 'ace-builds/src-noconflict/theme-twilight';
+import { selectNote } from '../redux/slices/ui.slice';
 
 const NoteEditorPage = () => {
     const dispatch = useDispatch();
     const source = useSelector((state) => state.ui.selectedSource);
-    const note = useSelector((state) => state.ui.selectedNote);
+    const note = useSelector(selectNote);
 
     const [title, setTitle] = useState();
     const [content, setContent] = useState();
@@ -22,12 +22,12 @@ const NoteEditorPage = () => {
     useEffect(() => {
         if (note) {
             setTitle(note.title);
-            setContent(note.content);
+            setContent(note.content ? note.content : '');
         } else {
             setTitle();
             setContent();
         }
-    }, [source, note]);
+    }, [note]);
 
     useEffect(() => {
         if (updateTimeoutRef.current != null) {
@@ -35,18 +35,23 @@ const NoteEditorPage = () => {
         }
 
         if (update) {
+            const payload = {
+                sourceId: source.id,
+                noteId: note.id,
+                noteUpdate: { ...update.noteUpdate }
+            };
             updateTimeoutRef.current = setTimeout(async () => {
                 try {
-                    await dispatch(updateNote({ source, note, noteUpdate: update.noteUpdate }));
+                    await dispatch(updateNote(payload));
                     updateTimeoutRef.current = null;
                     log.info(
-                        `Updated note [noteId: ${update.note.id}] [sourceId: ${update.source.id}]`
+                        `Updated note [noteId: ${payload.noteId}] [sourceId: ${payload.sourceId}]`
                     );
 
                     setUpdate(null);
                 } catch (error) {
                     log.error(
-                        `Unable to update note [noteId: ${update.note.id}] [sourceId: ${update.source.id}]`,
+                        `Unable to update note [noteId: ${payload.noteId}] [sourceId: ${payload.sourceId}]`,
                         error
                     );
                 }

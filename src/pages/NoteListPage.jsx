@@ -52,7 +52,7 @@ const NoteListPage = () => {
                     message: `Do you want to delete note '${selectedNote.title || UNTITLED_NOTE}'?`
                 });
                 if (result === true) {
-                    await dispatch(deleteNote({ source: selectSource, note: selectedNote }));
+                    await dispatch(deleteNote({ source: selectedSource, note: selectedNote }));
                     log.info(
                         `Deleted note [noteId: ${selectedNote.id}] [sourceId: ${selectedSource.id}] [sourceName: ${selectedSource.name}]`
                     );

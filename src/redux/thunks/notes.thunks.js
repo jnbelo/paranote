@@ -3,10 +3,18 @@ import * as databases from '../../providers/database';
 
 export const createNote = createAsyncThunk('notes/createNote', async ({ source }) => {
     const database = databases.get(source.id);
-    const note = await database.Note.create({ title: '(Untitled Note)' });
+    const { id, createdAt, updatedAt, title, content } = await database.Note.create({
+        title: '(Untitled Note)'
+    });
     return {
-        source,
-        note
+        sourceId: source.id,
+        note: {
+            id,
+            createdAt,
+            updatedAt,
+            title,
+            content
+        }
     };
 });
 
@@ -14,27 +22,30 @@ export const deleteNote = createAsyncThunk('notes/deleteNote', async ({ source, 
     const database = databases.get(source.id);
     await database.Note.destroy({ where: { id: note.id } });
     return {
-        source,
-        note
+        sourceId: source.id,
+        noteId: note.id
     };
 });
 
 export const updateNote = createAsyncThunk(
-    'notes/deleteNote',
-    async ({ source, note, noteUpdate }) => {
-        const database = databases.get(source.id);
-        const updated = await database.Note.update(
-            { ...noteUpdate },
-            {
-                where: {
-                    id: note.id
-                }
-            }
-        );
+    'notes/updateNote',
+    async ({ sourceId, noteId, noteUpdate }) => {
+        const database = databases.get(sourceId);
+        const existing = await database.Note.findByPk(noteId);
+        existing.title = noteUpdate.title;
+        existing.content = noteUpdate.content;
+        await existing.save();
 
+        const { id, createdAt, updatedAt, content, title } = existing;
         return {
-            source,
-            updated
+            sourceId,
+            note: {
+                id,
+                createdAt,
+                updatedAt,
+                title,
+                content
+            }
         };
     }
 );

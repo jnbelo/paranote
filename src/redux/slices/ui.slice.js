@@ -4,15 +4,26 @@ import log from '../../utils/logging';
 
 export const selectNotes = createSelector(
     (state) => state.ui.selectedSource,
-    (state) => state.entities.sources.byId,
-    (state) => state.entities.notes.byId,
-    (selected, sourcesById, notesById) => {
+    (state) => state.entities.notes,
+    (selected, notes) => {
         if (!selected) {
             return [];
         }
 
-        const source = sourcesById[selected.id];
-        return source.notes.filter((id) => id in notesById).map((id) => notesById[id]);
+        return notes[selected.id].allIds.map((id) => notes[selected.id].byId[id]);
+    }
+);
+
+export const selectNote = createSelector(
+    (state) => state.ui.selectedSource,
+    (state) => state.ui.selectedNote,
+    (state) => state.entities.notes,
+    (selectedSource, selectedNote, notes) => {
+        if (!selectedSource || !selectedNote) {
+            return null;
+        }
+
+        return notes[selectedSource.id].byId[selectedNote.id];
     }
 );
 
@@ -35,7 +46,7 @@ export const uiSlice = createSlice({
     },
     extraReducers: {
         [deleteNote.fulfilled]: (state, { payload }) => {
-            if (state.selectedNote && state.selectedNote.id === payload.note.id) {
+            if (state.selectedNote && state.selectedNote.id === payload.noteId) {
                 state.selectedNote = null;
             }
         }

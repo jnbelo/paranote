@@ -6,8 +6,7 @@ import usePrevious from '../hooks/usePrevious';
 
 const NO_SELECTION = { index: -1, item: null };
 
-const List = (props) => {
-    const { name, render, data, onSelectionChange } = props;
+const List = ({ name, render, data, onSelectionChange }) => {
     const [selection, setSelection] = useState(NO_SELECTION);
     const prevSelection = usePrevious(selection);
 
