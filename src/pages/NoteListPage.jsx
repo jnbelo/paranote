@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import React from 'react';
 import { Edit, Trash2 } from 'react-feather';
@@ -44,9 +43,11 @@ const NoteListPage = () => {
     };
 
     const handleDeleteNote = async () => {
+        if (!window.ipc) return;
+
         if (selectedNote) {
             try {
-                const result = await ipcRenderer.invoke('open-ok-cancel-box', {
+                const result = await window.ipc.invoke('open-ok-cancel-box', {
                     type: 'question',
                     title: 'Delete note',
                     message: `Do you want to delete note '${selectedNote.title || UNTITLED_NOTE}'?`

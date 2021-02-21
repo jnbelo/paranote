@@ -1,18 +1,18 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import { v4 as uuidv4 } from 'uuid';
-import { deleteFile } from '../utils/file.helpers';
-import defineMetaModel from './models/metaModel';
-import defineNoteModel from './models/noteModel';
+const { DataTypes, Sequelize } = require('sequelize');
+const { v4 } = require('uuid');
+const defineMetaModel = require('./models/meta.model');
+const defineNoteModel = require('./models/note.model');
+const { deleteFile } = require('../utils/file.helpers');
 
 const databases = {};
 
-export const create = async ({ location, password }) => {
+module.exports.create = async ({ location, password }) => {
     await deleteFile(location);
     return await open({ location, password });
 };
 
-export const open = async ({ location, password }) => {
-    const id = uuidv4();
+module.exports.open = async ({ location, password }) => {
+    const id = v4();
     const sequelize = new Sequelize(null, null, null, {
         dialect: 'sqlite',
         dialectModulePath: '@journeyapps/sqlcipher',
@@ -37,7 +37,7 @@ export const open = async ({ location, password }) => {
     return database;
 };
 
-export const close = async (id) => {
+module.exports.close = async (id) => {
     const database = databases[id];
 
     if (database) {
@@ -46,7 +46,7 @@ export const close = async (id) => {
     }
 };
 
-export const get = (id) => {
+module.exports.get = (id) => {
     const database = databases[id];
 
     if (!database) {
@@ -55,5 +55,3 @@ export const get = (id) => {
 
     return database;
 };
-
-export default databases;

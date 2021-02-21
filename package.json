@@ -26,16 +26,15 @@
         "react-router-dom": "^5.2.0",
         "react-scripts": "4.0.2",
         "sequelize": "^6.5.0",
-        "sql-template-strings": "^2.2.2",
         "sqlite": "^4.0.19",
         "styled-components": "^5.2.1",
         "uuid": "^8.3.2"
     },
     "scripts": {
         "postinstall": "electron-builder install-app-deps",
-        "start": "react-app-rewired start",
-        "build": "react-app-rewired build",
-        "test": "react-app-rewired test --env=jest-environment-jsdom-sixteen",
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
         "coverage": "yarn test --coverage",
         "eject": "react-scripts eject",
         "lint": "concurrently \"eslint src/\" \"eslint main/\"",
@@ -101,7 +100,6 @@
         "jest-environment-jsdom-sixteen": "^1.0.3",
         "node-pre-gyp": "^0.17.0",
         "prettier": "^2.2.1",
-        "react-app-rewired": "^2.1.8",
         "react-test-renderer": "^17.0.1",
         "redux-devtools": "^3.7.0",
         "wait-on": "^5.2.1"

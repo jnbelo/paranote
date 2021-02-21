@@ -1,9 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import * as databases from '../../providers/database';
+import * as notesContext from '../../providers/notes.context';
 
 export const createNote = createAsyncThunk('notes/createNote', async ({ source }) => {
-    const database = databases.get(source.id);
-    const { id, createdAt, updatedAt, title, content } = await database.Note.create({
+    const { id, createdAt, updatedAt, title, content } = await notesContext.create(source.id, {
         title: '(Untitled Note)'
     });
     return {
@@ -19,8 +18,7 @@ export const createNote = createAsyncThunk('notes/createNote', async ({ source }
 });
 
 export const deleteNote = createAsyncThunk('notes/deleteNote', async ({ source, note }) => {
-    const database = databases.get(source.id);
-    await database.Note.destroy({ where: { id: note.id } });
+    await notesContext.destroy(source.id, note.id);
     return {
         sourceId: source.id,
         noteId: note.id
@@ -30,13 +28,11 @@ export const deleteNote = createAsyncThunk('notes/deleteNote', async ({ source, 
 export const updateNote = createAsyncThunk(
     'notes/updateNote',
     async ({ sourceId, noteId, noteUpdate }) => {
-        const database = databases.get(sourceId);
-        const existing = await database.Note.findByPk(noteId);
-        existing.title = noteUpdate.title;
-        existing.content = noteUpdate.content;
-        await existing.save();
-
-        const { id, createdAt, updatedAt, content, title } = existing;
+        const { id, createdAt, updatedAt, content, title } = await notesContext.update(
+            sourceId,
+            noteId,
+            noteUpdate
+        );
         return {
             sourceId,
             note: {

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { StyledBrowserButton } from './BrowseButton.styles';
-import { ipcRenderer } from 'electron';
 
 export const SAVE_TYPE = 'save';
 export const OPEN_TYPE = 'open';
@@ -12,11 +11,13 @@ const BrowseButton = (props) => {
     const handleClick = async (event) => {
         event.preventDefault();
 
+        if (!window.ipc) return;
+
         let result;
         if (props.type === SAVE_TYPE) {
-            result = await ipcRenderer.invoke('open-file-saver');
+            result = await window.ipc.invoke('open-file-saver');
         } else {
-            result = await ipcRenderer.invoke('open-file-opener');
+            result = await window.ipc.invoke('open-file-opener');
         }
 
         if (result && props.formatResult) {

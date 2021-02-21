@@ -1,5 +1,3 @@
-import { remote } from 'electron';
-
-const log = remote ? remote.require('electron-log') : console;
+const log = window.log ? window.log : console;
 
 export default log;

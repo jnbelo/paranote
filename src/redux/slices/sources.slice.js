@@ -1,6 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
-import { createNote, deleteNote } from '../thunks/notes.thunks';
 import { createSource, loadSource, removeSource } from '../thunks/sources.thunks';
 
 export const selectSources = createSelector(

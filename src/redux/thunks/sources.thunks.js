@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import * as databases from '../../providers/database';
-
-const CURRENT_VERSION = 0.1;
+import * as sourcesContext from '../../providers/sources.context';
+import * as notesContext from '../../providers/notes.context';
 
 export const createSource = createAsyncThunk(
     'sources/createSource',
@@ -14,13 +13,9 @@ export const createSource = createAsyncThunk(
             }
         }
 
-        const database = await databases.create({ location, password });
-        const meta = await database.Meta.create({ name, version: `${CURRENT_VERSION}` });
+        const source = await sourcesContext.create({ location, password, name });
         return {
-            id: database.id,
-            location,
-            name,
-            version: meta.version,
+            ...source,
             notes: []
         };
     }
@@ -37,38 +32,14 @@ export const loadSource = createAsyncThunk(
             }
         }
 
-        const database = await databases.open({ location, password });
-        const meta = await database.Meta.findOne();
+        const source = await sourcesContext.load({ location, password });
+        const notes = await notesContext.getAll(source.id);
 
-        if (!meta) {
-            throw new Error('Unable to find meta-information');
-        }
-
-        if (!meta.name || !meta.createdAt || !meta.updatedAt) {
-            throw new Error('Database has invalid meta-information');
-        }
-
-        const notes = (await database.Note.findAll()).map(
-            ({ id, title, createdAt, updatedAt, content }) => ({
-                id,
-                createdAt,
-                updatedAt,
-                title,
-                content
-            })
-        );
-
-        return {
-            id: database.id,
-            location,
-            name: meta.name,
-            version: meta.version,
-            notes
-        };
+        return { ...source, notes };
     }
 );
 
 export const removeSource = createAsyncThunk('sources/removeSource', async ({ id }) => {
-    await databases.close(id);
+    await await sourcesContext.close(id);
     return id;
 });

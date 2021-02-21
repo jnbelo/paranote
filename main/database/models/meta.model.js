@@ -1,23 +1,25 @@
-export default function defineNoteModel(sequelize, DataTypes) {
+module.exports = function defineMetaModel(sequelize, DataTypes) {
     return sequelize.define(
-        'Note',
+        'Meta',
         {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            title: {
+            name: {
                 type: DataTypes.TEXT,
                 allowNull: false
             },
-            content: {
-                type: DataTypes.TEXT
+            version: {
+                type: DataTypes.TEXT,
+                allowNull: false
             }
         },
         {
             timestamps: true,
+            tableName: 'meta',
             underscored: true
         }
     );
-}
+};

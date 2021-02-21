@@ -26,7 +26,13 @@ async function createWindow() {
         height: 680,
         title: `Paranote v${app.getVersion()}`,
         icon: path.join(__dirname, '../assets/icon.png'),
-        webPreferences: { nodeIntegration: true, enableRemoteModule: true, devTools: isDev }
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            enableRemoteModule: false,
+            devTools: isDev,
+            preload: path.join(__dirname, 'preload.js')
+        }
     });
 
     mainWindow.setMenu(null);
