@@ -1,7 +1,7 @@
-const fs = require('fs');
-const logger = require('electron-log');
+import fs from 'fs';
+import logger from 'electron-log';
 
-module.exports.deleteFile = async (file) => {
+export const deleteFile = async (file: string) => {
     const fsp = fs.promises;
     try {
         await fsp.unlink(file);

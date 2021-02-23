@@ -1,0 +1,15 @@
+appId: 'pt.starbreather.paranote'
+files:
+    - './build/**/*'
+    - './node_modules/**/*'
+    - './electron/node_modules/**/*'
+    - './build/electron/**/*'
+publish:
+    provider: 'github'
+extends: null
+mac:
+    category: 'public.app-category.productivity'
+linux:
+    target:
+        - 'AppImage'
+    category: 'Office'

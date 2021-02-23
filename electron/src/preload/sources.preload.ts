@@ -1,12 +1,12 @@
-const { contextBridge, ipcRenderer } = require('electron');
-const logger = require('electron-log');
-const { v4 } = require('uuid');
-const databases = require('../database/database');
+import { contextBridge } from 'electron';
+import { CreateSource, LoadSource, Source } from '@paranote/common/src';
+import logger from 'electron-log';
+import * as databases from '../database/databases';
 
-const CURRENT_VERSION = 0.1;
+const CURRENT_VERSION = '0.1';
 
 contextBridge.exposeInMainWorld('sourcesRepo', {
-    create: async ({ location, password, name }) => {
+    create: async ({ location, password, name }: CreateSource): Promise<Source> => {
         logger.debug('Context bridge: Creating new database');
         const database = await databases.create({ location, password });
         await database.Meta.create({ name, version: `${CURRENT_VERSION}` });
@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('sourcesRepo', {
             version: CURRENT_VERSION
         };
     },
-    load: async ({ location, password }) => {
+    load: async ({ location, password }: LoadSource): Promise<Source> => {
         logger.debug('Context bridge: Loading a database');
         const database = await databases.open({ location, password });
         const meta = await database.Meta.findOne();
@@ -38,7 +38,7 @@ contextBridge.exposeInMainWorld('sourcesRepo', {
             version: meta.version
         };
     },
-    close: async (id) => {
+    close: async (id: string) => {
         logger.debug('Context bridge: Closing a database');
         await databases.close(id);
     }

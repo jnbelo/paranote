@@ -1,0 +1,36 @@
+{
+    "name": "@paranote/electron",
+    "version": "0.1.0",
+    "author": {
+        "name": "José Belo",
+        "url": "https://github.com/jnbelo"
+    },
+    "repository": "git@github.com:jnbelo/paranote.git",
+    "private": true,
+    "main": "../build/electron/main.js",
+    "homepage": "./",
+    "dependencies": {
+        "@journeyapps/sqlcipher": "^5.1.0",
+        "@paranote/common": "0.1.0",
+        "electron": "^11.3.0",
+        "electron-devtools-installer": "^3.1.1",
+        "electron-is-dev": "^1.2.0",
+        "electron-log": "^4.3.2",
+        "sequelize": "^6.5.0",
+        "sqlite": "^4.0.19",
+        "typescript": "^4.1.5",
+        "uuid": "^8.3.2"
+    },
+    "scripts": {
+        "start": "yarn build && electron .",
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@types/electron-devtools-installer": "^2.2.0",
+        "@types/node": "^14.14.31",
+        "@types/uuid": "^8.3.0",
+        "@types/validator": "^13.1.3",
+        "electron-builder": "^22.9.1",
+        "electron-reload": "^1.5.0"
+    }
+}

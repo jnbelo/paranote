@@ -1,26 +1,26 @@
-const electron = require('electron');
-const { ipcMain, dialog } = require('electron');
-const { default: installExtension, REDUX_DEVTOOLS } = require('electron-devtools-installer');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-
-const log = require('electron-log');
-const path = require('path');
-const isDev = require('electron-is-dev');
+import { app, ipcMain, dialog, BrowserWindow } from 'electron';
+import installExtension, {REDUX_DEVTOOLS} from 'electron-devtools-installer';
+import log  from  'electron-log';
+import path  from 'path';
+import isDev  from 'electron-is-dev';
 
 log.catchErrors();
 log.info(`Starting Paranote up [version: ${app.getVersion()}] [dev: ${isDev}]`);
 
-let mainWindow;
+let mainWindow: BrowserWindow;
 
-async function createWindow() {
+const addReduxExtension = async () =>  {
+    if(!isDev) return;
+
     try {
         const name = await installExtension(REDUX_DEVTOOLS);
         log.info(`Added Extension:  ${name}`);
     } catch (error) {
         log.error('An error occurred: ', error);
     }
+}
 
+const createWindow = async () => {
     mainWindow = new BrowserWindow({
         width: 900,
         height: 680,
@@ -45,16 +45,17 @@ async function createWindow() {
     mainWindow.loadURL(
         isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
     );
-    mainWindow.on('closed', () => (mainWindow = null));
 
     if (isDev) {
         mainWindow.webContents.openDevTools();
     }
+}
 
+const setUpIpc = () => {
     /* IPC communication */
     ipcMain.removeAllListeners();
 
-    ipcMain.handle('open-file-saver', async (event, arg) => {
+    ipcMain.handle('open-file-saver', async () => {
         log.debug('Opening file saver dialog');
         const { canceled, filePath } = await dialog.showSaveDialog(mainWindow, {
             title: 'Select File Location',
@@ -70,7 +71,7 @@ async function createWindow() {
         return canceled ? '' : filePath;
     });
 
-    ipcMain.handle('open-file-opener', async (event, arg) => {
+    ipcMain.handle('open-file-opener', async () => {
         log.debug('Opening file opener dialog');
         const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
             title: 'Open File From Location',
@@ -86,7 +87,7 @@ async function createWindow() {
         return canceled ? '' : filePaths ? filePaths[0] : '';
     });
 
-    ipcMain.handle('open-ok-cancel-box', async (event, args) => {
+    ipcMain.handle('open-ok-cancel-box', async (_, args) => {
         const { type, title, message } = args;
         log.debug(`Opening message box with title ${title}`);
         const { response } = await dialog.showMessageBox(mainWindow, {
@@ -99,18 +100,28 @@ async function createWindow() {
     });
 }
 
-app.on('ready', createWindow);
+const onReady = async () => {
+    log.debug('Application is ready')
+    await addReduxExtension();
+    setUpIpc();
+    await createWindow();
+}
 
-app.on('window-all-closed', () => {
+const onWindowAllClosed  = async () => {
     log.info('Closing application');
     if (process.platform !== 'darwin') {
         app.quit();
     }
-});
+} 
 
-app.on('activate', () => {
-    log.debug('Activating');
+const onActivate  = async () => {
+    log.debug('Activating application');
     if (mainWindow === null) {
-        createWindow();
+        await createWindow();
     }
-});
+} 
+
+
+app.on('ready', onReady);
+app.on('window-all-closed', onWindowAllClosed);
+app.on('activate', onActivate);

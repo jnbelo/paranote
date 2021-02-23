@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../build/common",
+    "types": [
+      "node"
+    ],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "module": "commonjs",
+    "rootDir": "./src"
+  },
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "include": [
+    "**/*.js",
+    "**/*.ts",
+  ]
+}

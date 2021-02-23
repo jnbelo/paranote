@@ -1,0 +1,14 @@
+{
+    "name": "@paranote/common",
+    "version": "0.1.0",
+    "author": {
+        "name": "José Belo",
+        "url": "https://github.com/jnbelo"
+    },
+    "repository": "git@github.com:jnbelo/paranote.git",
+    "private": true,
+    "main": "../build/common/index.js",
+    "scripts": {
+        "build": "tsc"
+    }
+}

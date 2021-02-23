@@ -1,19 +1,20 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const { v4 } = require('uuid');
-const defineMetaModel = require('./models/meta.model');
-const defineNoteModel = require('./models/note.model');
-const { deleteFile } = require('../utils/file.helpers');
+import { Sequelize } from 'sequelize';
+import { v4 } from 'uuid';
+import { deleteFile } from '../utils/file.helpers';
+import { CreateDatabase, Database } from './interfaces/database.interface';
+import { initMetaModel } from './models/meta.model';
+import { initNoteModel } from './models/note.model';
 
-const databases = {};
+const databases: { [key: string]: Database } = {};
 
-module.exports.create = async ({ location, password }) => {
+export const create = async ({ location, password }: CreateDatabase): Promise<Database> => {
     await deleteFile(location);
     return await open({ location, password });
 };
 
-module.exports.open = async ({ location, password }) => {
+export const open = async ({ location, password }: CreateDatabase): Promise<Database> => {
     const id = v4();
-    const sequelize = new Sequelize(null, null, null, {
+    const sequelize = new Sequelize('', '', '', {
         dialect: 'sqlite',
         dialectModulePath: '@journeyapps/sqlcipher',
         storage: location
@@ -27,8 +28,8 @@ module.exports.open = async ({ location, password }) => {
     const database = {
         id,
         sequelize,
-        Meta: defineMetaModel(sequelize, DataTypes),
-        Note: defineNoteModel(sequelize, DataTypes)
+        Meta: initMetaModel(sequelize),
+        Note: initNoteModel(sequelize)
     };
 
     await sequelize.sync({ alter: true });
@@ -37,7 +38,7 @@ module.exports.open = async ({ location, password }) => {
     return database;
 };
 
-module.exports.close = async (id) => {
+export const close = async (id: string): Promise<void> => {
     const database = databases[id];
 
     if (database) {
@@ -46,7 +47,7 @@ module.exports.close = async (id) => {
     }
 };
 
-module.exports.get = (id) => {
+export const get = (id: string): Database => {
     const database = databases[id];
 
     if (!database) {
