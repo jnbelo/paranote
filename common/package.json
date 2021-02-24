@@ -7,8 +7,10 @@
     },
     "repository": "git@github.com:jnbelo/paranote.git",
     "private": true,
-    "main": "../build/common/index.js",
+    "main": "./src/index.ts",
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "lint": "eslint ./src",
+        "lint:fix": "yarn lint --fix"
     }
 }

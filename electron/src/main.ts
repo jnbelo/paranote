@@ -1,16 +1,16 @@
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
-import installExtension, {REDUX_DEVTOOLS} from 'electron-devtools-installer';
-import log  from  'electron-log';
-import path  from 'path';
-import isDev  from 'electron-is-dev';
+import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import log from 'electron-log';
+import path from 'path';
+import isDev from 'electron-is-dev';
 
 log.catchErrors();
 log.info(`Starting Paranote up [version: ${app.getVersion()}] [dev: ${isDev}]`);
 
 let mainWindow: BrowserWindow;
 
-const addReduxExtension = async () =>  {
-    if(!isDev) return;
+const addReduxExtension = async () => {
+    if (!isDev) return;
 
     try {
         const name = await installExtension(REDUX_DEVTOOLS);
@@ -18,7 +18,7 @@ const addReduxExtension = async () =>  {
     } catch (error) {
         log.error('An error occurred: ', error);
     }
-}
+};
 
 const createWindow = async () => {
     mainWindow = new BrowserWindow({
@@ -49,7 +49,7 @@ const createWindow = async () => {
     if (isDev) {
         mainWindow.webContents.openDevTools();
     }
-}
+};
 
 const setUpIpc = () => {
     /* IPC communication */
@@ -98,29 +98,28 @@ const setUpIpc = () => {
         });
         return response == 0;
     });
-}
+};
 
 const onReady = async () => {
-    log.debug('Application is ready')
+    log.debug('Application is ready');
     await addReduxExtension();
     setUpIpc();
     await createWindow();
-}
+};
 
-const onWindowAllClosed  = async () => {
+const onWindowAllClosed = async () => {
     log.info('Closing application');
     if (process.platform !== 'darwin') {
         app.quit();
     }
-} 
+};
 
-const onActivate  = async () => {
+const onActivate = async () => {
     log.debug('Activating application');
     if (mainWindow === null) {
         await createWindow();
     }
-} 
-
+};
 
 app.on('ready', onReady);
 app.on('window-all-closed', onWindowAllClosed);

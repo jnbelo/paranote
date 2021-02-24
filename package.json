@@ -14,20 +14,25 @@
     ],
     "scripts": {
         "postinstall": "electron-builder install-app-deps",
-        "start:web": "yarn workspace app start",
-        "start:electron": "yarn workspace electron start",
-        "start:dev": "concurrently \"cross-env BROWSER=none yarn workspace app start\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development yarn workspace electron start\"",
-        "lint": "eslint ./app/src/ ./electron/src/",
-        "lint:fix": "eslint --fix ./app/src/ ./electron/src/",
+        "start:web": "yarn workspace @paranote/app start",
+        "start:electron": "yarn workspace @paranote/electron start",
+        "start:dev": "concurrently \"cross-env BROWSER=none yarn workspace @paranote/app start\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development yarn workspace @paranote/electron start\"",
+        "lint": "cross-env yarn workspace @paranote/electron lint && yarn workspace @paranote/app lint && yarn workspace @paranote/common lint",
+        "lint:fix": "cross-env yarn workspace @paranote/electron lint:fix && yarn workspace @paranote/app lint:fix && yarn workspace @paranote/common lint:fix",
         "package": "yarn build && electron-builder --publish never",
         "release": "yarn build && electron-builder --publish always"
     },
     "devDependencies": {
         "concurrently": "^6.0.0",
+        "wait-on": "^5.2.1"
+    },
+    "dependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.15.2",
+        "@typescript-eslint/parser": "^4.15.2",
         "cross-env": "^7.0.3",
         "eslint": "^7.20.0",
         "eslint-config-prettier": "^8.0.0",
         "eslint-plugin-prettier": "^3.3.1",
-        "wait-on": "^5.2.1"
+        "prettier": "^2.2.1"
     }
 }

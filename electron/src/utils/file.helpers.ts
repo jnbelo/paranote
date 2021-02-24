@@ -1,7 +1,7 @@
 import fs from 'fs';
 import logger from 'electron-log';
 
-export const deleteFile = async (file: string) => {
+export const deleteFile = async (file: string): Promise<void> => {
     const fsp = fs.promises;
     try {
         await fsp.unlink(file);
