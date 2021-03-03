@@ -5,7 +5,7 @@ require('./preload/notes.preload');
 require('./preload/sources.preload');
 
 contextBridge.exposeInMainWorld('ipc', {
-    invoke: (channel: string, data: unknown): Promise<unknown> => {
+    invoke: (channel: string, data?: unknown): Promise<unknown> => {
         return ipcRenderer.invoke(channel, data);
     }
 });

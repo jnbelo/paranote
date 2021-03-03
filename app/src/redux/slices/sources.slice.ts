@@ -1,5 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
+import { SourcesState } from '../interfaces/sources.interfaces';
 import { createSource, loadSource, removeSource } from '../thunks/sources.thunks';
 
 export const selectSources = createSelector(
@@ -10,14 +11,15 @@ export const selectSources = createSelector(
 
 export const selectSourcesError = (state) => state.sources.error;
 
+const initialState: SourcesState = {
+    loading: false,
+    byId: {},
+    allIds: []
+};
+
 export const sourcesSlice = createSlice({
     name: 'sources',
-    initialState: {
-        loading: false,
-        error: null,
-        byId: {},
-        allIds: []
-    },
+    initialState,
     reducers: {},
     extraReducers: {
         [createSource.pending]: (state) => {

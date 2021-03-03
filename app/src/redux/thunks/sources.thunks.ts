@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as sourcesContext from '../../providers/sources.context';
 import * as notesContext from '../../providers/notes.context';
+import { SourceCreate } from '../interfaces/sources.interfaces';
 
 export const createSource = createAsyncThunk(
     'sources/createSource',
-    async ({ location, password, name }, { getState }) => {
+    async ({ location, password, name }: SourceCreate, { getState }) => {
         const { byId } = getState().entities.sources;
 
         for (const source in byId) {

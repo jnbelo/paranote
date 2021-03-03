@@ -71,12 +71,9 @@ const theme = {
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <ThemeProvider theme={theme}>
-                <GlobalStyle />
-                <MemoryRouter>
-                    <App />
-                </MemoryRouter>
-            </ThemeProvider>
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

@@ -1,4 +1,4 @@
-import { DataTypes, Model, ModelCtor, Optional, Sequelize } from 'sequelize/types';
+import { DataTypes, Model, ModelCtor, Optional, Sequelize } from 'sequelize';
 
 export interface NoteAttributes {
     id: number;

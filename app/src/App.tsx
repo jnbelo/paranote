@@ -1,20 +1,27 @@
 import { default as React } from 'react';
-import { PlusCircle, Upload, X } from 'react-feather';
-import { useDispatch, useSelector } from 'react-redux';
-import { Route, Switch, withRouter } from 'react-router';
-import { SourceListContainer, SourceListItem, Wrapper } from './App.styles';
-import Button from './components/Button';
-import List from './components/List';
-import TitlePanel from './components/TitlePanel';
-import CreateSourcePage from './pages/CreateSourcePage';
-import LoadSourcePage from './pages/LoadSourcePage';
-import NoteListPage from './pages/NoteListPage';
-import { selectSources } from './redux/slices/sources.slice';
-import { sourceSelected } from './redux/slices/ui.slice';
-import { removeSource } from './redux/thunks/sources.thunks';
+import { withRouter } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
+import './App.scss';
+import CreateSourcePage from './pages/create-source/CreateSourcePage';
+import { EntryPage } from './pages/entry/EntryPage';
+import LoadSourcePage from './pages/load-source/LoadSourcePage';
 
 const App = () => {
-    const dispatch = useDispatch();
+    return (
+        <Switch>
+            <Route exact path="/">
+                <EntryPage></EntryPage>
+            </Route>
+            <Route exact path="/create-source">
+                <CreateSourcePage />
+            </Route>
+            <Route exact path="/load-source">
+                <LoadSourcePage />
+            </Route>
+        </Switch>
+    );
+
+    /*const dispatch = useDispatch();
     const sources = useSelector(selectSources);
 
     const handleSourceSelection = (selection) => {
@@ -69,7 +76,7 @@ const App = () => {
                 </Route>
             </Switch>
         </Wrapper>
-    );
+    );*/
 };
 
 export default withRouter(App);

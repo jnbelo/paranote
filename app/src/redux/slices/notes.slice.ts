@@ -1,11 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
+import { NotesState } from '../interfaces/notes.interfaces';
 import { createNote, deleteNote, updateNote } from '../thunks/notes.thunks';
 import { loadSource, removeSource } from '../thunks/sources.thunks';
 
+const initialState: NotesState = {};
+
 export const notesSlice = createSlice({
     name: 'notes',
-    initialState: {},
+    initialState,
     reducers: {},
     extraReducers: {
         [loadSource.fulfilled]: (state, { payload }) => {

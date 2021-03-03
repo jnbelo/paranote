@@ -1,4 +1,4 @@
-import { DataTypes, Model, ModelCtor, Optional, Sequelize } from 'sequelize/types';
+import { Optional, Model, Sequelize, ModelCtor, DataTypes } from 'sequelize';
 
 export interface MetaAttributes {
     id: number;

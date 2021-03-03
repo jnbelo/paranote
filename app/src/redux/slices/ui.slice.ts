@@ -1,6 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { deleteNote } from '../thunks/notes.thunks';
 import log from '../../utils/logging';
+import { UiState } from '../interfaces/ui.interfaces';
 
 export const selectNotes = createSelector(
     (state) => state.ui.selectedSource,
@@ -27,12 +28,11 @@ export const selectNote = createSelector(
     }
 );
 
+const initialState: UiState = {};
+
 export const uiSlice = createSlice({
     name: 'ui',
-    initialState: {
-        selectedSource: null,
-        selectedNote: null
-    },
+    initialState,
     reducers: {
         sourceSelected(state, { payload }) {
             log.info(`Selecting source ${payload}`);
