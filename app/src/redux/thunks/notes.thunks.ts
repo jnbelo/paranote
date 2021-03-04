@@ -1,47 +1,43 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as notesContext from '../../providers/notes.context';
+import { Note, NoteDelete, NoteUpdate } from '../interfaces/notes.interfaces';
 
-export const createNote = createAsyncThunk('notes/createNote', async ({ source }) => {
-    const { id, createdAt, updatedAt, title, content } = await notesContext.create(source.id, {
+export const createNote = createAsyncThunk<Note, string>('notes/createNote', async (sourceId) => {
+    const { id, createdAt, updatedAt, title, content } = await notesContext.create(sourceId, {
         title: '(Untitled Note)'
     });
     return {
-        sourceId: source.id,
-        note: {
+        id,
+        createdAt,
+        updatedAt,
+        title,
+        content,
+        sourceId
+    };
+});
+
+export const deleteNote = createAsyncThunk<NoteDelete, NoteDelete>(
+    'notes/deleteNote',
+    async ({ sourceId, noteId }) => {
+        await notesContext.destroy(sourceId, noteId);
+        return { sourceId, noteId };
+    }
+);
+
+export const updateNote = createAsyncThunk<Note, NoteUpdate>(
+    'notes/updateNote',
+    async ({ sourceId, id, title: newTitle, content: newContent }) => {
+        const { createdAt, updatedAt, content, title } = await notesContext.update(sourceId, id, {
+            title: newTitle,
+            content: newContent
+        });
+        return {
             id,
             createdAt,
             updatedAt,
             title,
-            content
-        }
-    };
-});
-
-export const deleteNote = createAsyncThunk('notes/deleteNote', async ({ source, note }) => {
-    await notesContext.destroy(source.id, note.id);
-    return {
-        sourceId: source.id,
-        noteId: note.id
-    };
-});
-
-export const updateNote = createAsyncThunk(
-    'notes/updateNote',
-    async ({ sourceId, noteId, noteUpdate }) => {
-        const { id, createdAt, updatedAt, content, title } = await notesContext.update(
-            sourceId,
-            noteId,
-            noteUpdate
-        );
-        return {
-            sourceId,
-            note: {
-                id,
-                createdAt,
-                updatedAt,
-                title,
-                content
-            }
+            content,
+            sourceId
         };
     }
 );

@@ -1,15 +1,7 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
 import { SourcesState } from '../interfaces/sources.interfaces';
 import { createSource, loadSource, removeSource } from '../thunks/sources.thunks';
-
-export const selectSources = createSelector(
-    (state) => state.entities.sources.allIds,
-    (state) => state.entities.sources.byId,
-    (allIds, byId) => allIds.map((id) => byId[id])
-);
-
-export const selectSourcesError = (state) => state.sources.error;
 
 const initialState: SourcesState = {
     loading: false,
@@ -21,11 +13,11 @@ export const sourcesSlice = createSlice({
     name: 'sources',
     initialState,
     reducers: {},
-    extraReducers: {
-        [createSource.pending]: (state) => {
+    extraReducers: (builder) => {
+        builder.addCase(createSource.pending, (state) => {
             state.loading = true;
-        },
-        [createSource.fulfilled]: (state, { payload }) => {
+        });
+        builder.addCase(createSource.fulfilled, (state, { payload }) => {
             log.info(
                 `Created source '${payload.name}' with id '${payload.id}' in '${payload.location}'`
             );
@@ -33,16 +25,16 @@ export const sourcesSlice = createSlice({
             state.loading = false;
             state.byId[source.id] = source;
             state.allIds.push(source.id);
-        },
-        [createSource.rejected]: (state, action) => {
+        });
+        builder.addCase(createSource.rejected, (state, action) => {
             log.error(`Error creating source: ${action.error.message}`);
             state.loading = false;
             state.error = action.error.message;
-        },
-        [loadSource.pending]: (state) => {
+        });
+        builder.addCase(loadSource.pending, (state) => {
             state.loading = true;
-        },
-        [loadSource.fulfilled]: (state, { payload }) => {
+        });
+        builder.addCase(loadSource.fulfilled, (state, { payload }) => {
             log.info(
                 `Loaded source '${payload.name}' with id '${payload.id}' in '${payload.location}'`
             );
@@ -50,26 +42,26 @@ export const sourcesSlice = createSlice({
             state.loading = false;
             state.byId[source.id] = source;
             state.allIds.push(source.id);
-        },
-        [loadSource.rejected]: (state, action) => {
+        });
+        builder.addCase(loadSource.rejected, (state, action) => {
             log.error(`Error loading source: ${action.error.message}`);
             state.loading = false;
             state.error = action.error.message;
-        },
-        [removeSource.pending]: (state) => {
+        });
+        builder.addCase(removeSource.pending, (state) => {
             state.loading = true;
-        },
-        [removeSource.fulfilled]: (state, { payload }) => {
+        });
+        builder.addCase(removeSource.fulfilled, (state, { payload }) => {
             log.info(`Closed source with id '${payload}'`);
             state.loading = false;
-            delete state.byId[payload.id];
+            delete state.byId[payload];
             state.allIds = state.allIds.filter((id) => id !== payload);
-        },
-        [removeSource.rejected]: (state, { error }) => {
+        });
+        builder.addCase(removeSource.rejected, (state, { error }) => {
             log.error(`Error closing source: ${error.message}`);
             state.loading = false;
             state.error = error.message;
-        }
+        });
     }
 });
 

@@ -13,4 +13,17 @@ export interface Note {
     content: string;
     createdAt: Date;
     updatedAt: Date;
+    sourceId: string;
+}
+
+export interface NoteDelete {
+    sourceId: string;
+    noteId: number;
+}
+
+export interface NoteUpdate {
+    id: number;
+    title: string;
+    content: string;
+    sourceId: string;
 }
