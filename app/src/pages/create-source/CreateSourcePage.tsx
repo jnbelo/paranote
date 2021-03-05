@@ -1,25 +1,37 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import FormBrowserField from '../../components/FormBrowserField/FormBrowserField';
 import FormTextField from '../../components/FormTextField/FormTextField';
 import { showSaveFileDialog } from '../../providers/dialog.context';
+import { createSource } from '../../redux/thunks/sources.thunks';
 import { CreateSourceForm } from './CreateSourceForm';
 
 export default function CreateSourcePage(): JSX.Element {
     const history = useHistory();
+    const dispatch = useDispatch();
 
     const initialValues: CreateSourceForm = {
         name: '',
         location: ''
     };
 
-    function handleCancel() {
+    async function handleSubmit(
+        { name, location, password }: CreateSourceForm,
+        helpers: FormikHelpers<CreateSourceForm>
+    ) {
+        await dispatch(createSource({ name, location, password }));
+        helpers.setSubmitting(false);
+        goBack();
+    }
+
+    function goBack() {
         history.push('/');
     }
 
     function validate({ name, location }: CreateSourceForm) {
-        const errors = { name: '', location: '' };
+        const errors: FormikErrors<CreateSourceForm> = {};
 
         if (!name) {
             errors.name = 'Name is Required';
@@ -40,13 +52,7 @@ export default function CreateSourcePage(): JSX.Element {
                 validateOnChange={false}
                 initialValues={initialValues}
                 validate={validate}
-                onSubmit={(values, actions) => {
-                    console.log({ values, actions });
-
-                    alert(JSON.stringify(values, null, 2));
-
-                    actions.setSubmitting(false);
-                }}
+                onSubmit={handleSubmit}
             >
                 {({ isSubmitting, errors }) => (
                     <Form className="mt-4">
@@ -73,7 +79,7 @@ export default function CreateSourcePage(): JSX.Element {
                                     className="button is-light"
                                     type="button"
                                     disabled={isSubmitting}
-                                    onClick={handleCancel}
+                                    onClick={goBack}
                                 >
                                     Cancel
                                 </button>

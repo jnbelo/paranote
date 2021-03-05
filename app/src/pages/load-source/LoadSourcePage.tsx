@@ -1,4 +1,4 @@
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -23,14 +23,15 @@ export default function LoadSourcePage(): JSX.Element {
     ) {
         await dispatch(loadSource({ location, password }));
         helpers.setSubmitting(false);
+        goBack();
     }
 
-    function handleCancel() {
+    function goBack() {
         history.push('/');
     }
 
     function validate({ location }: LoadSourceForm) {
-        const errors = { location: '' };
+        const errors: FormikErrors<LoadSourceForm> = {};
 
         if (!location) {
             errors.location = 'Location is Required';
@@ -73,7 +74,7 @@ export default function LoadSourcePage(): JSX.Element {
                                     className="button is-light"
                                     type="button"
                                     disabled={isSubmitting}
-                                    onClick={handleCancel}
+                                    onClick={goBack}
                                 >
                                     Cancel
                                 </button>

@@ -9,3 +9,6 @@ export const selectSources = createSelector(
 
 export const selectSourcesError = (state: RootState): string | undefined =>
     state.entities.sources.error;
+
+export const selectHasSources = (state: RootState): boolean =>
+    !!state.entities.sources.allIds.length;
