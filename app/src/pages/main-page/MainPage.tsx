@@ -1,26 +1,20 @@
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import Tab from '../../components/Tabs/Tab';
+import Tabs from '../../components/Tabs/Tabs';
 import { selectSources } from '../../redux/selectors/sources.selectors';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function MainPage(): JSX.Element {
     const sources = useSelector(selectSources);
 
     return (
-        <div className="tabs is-boxed is-small">
-            <ul>
-                {sources.map((source, index) => (
-                    <li className={index === 0 ? 'ios-active' : ''}>
-                        <a>
-                            <span>{source.name}</span>
-                            <span className="icon is-small">
-                                <FontAwesomeIcon icon={faTimes} />
-                            </span>
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Tabs>
+            {sources.map((source, index) => (
+                <Tab index={index} title={source.name} icon={faTimes}>
+                    <div>TEST</div>
+                </Tab>
+            ))}
+        </Tabs>
     );
 }
