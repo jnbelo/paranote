@@ -4,7 +4,7 @@ import { Note } from '../models/note.model';
 
 export interface CreateDatabase {
     location: string;
-    password: string;
+    password?: string;
 }
 
 export interface Database {

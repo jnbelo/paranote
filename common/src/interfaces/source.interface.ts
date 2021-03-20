@@ -1,12 +1,12 @@
 export interface CreateSource {
     location: string;
-    password: string;
+    password?: string;
     name: string;
 }
 
 export interface LoadSource {
     location: string;
-    password: string;
+    password?: string;
 }
 
 export interface Source {

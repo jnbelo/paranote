@@ -1,0 +1,14 @@
+@import '../../_theme.scss';
+
+.is-scrollable {
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.list-item {
+    cursor: pointer;
+
+    &.is-list-item-selected {
+        background-color: $list-selection-color;
+    }
+}

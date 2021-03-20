@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import log from '../../utils/logging';
+import * as logger from '../../providers/logging.context';
 import { UiState } from '../interfaces/ui.interfaces';
 import { deleteNote } from '../thunks/notes.thunks';
 
@@ -10,12 +10,12 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         selectSource(state, { payload }: PayloadAction<string>) {
-            log.info(`Selecting source ${payload}`);
+            logger.info(`Selecting source ${payload}`);
             state.selectedSource = payload;
             delete state.selectedNote;
         },
         selectNote(state, { payload }: PayloadAction<number>) {
-            log.info(`Selecting note ${payload}`);
+            logger.info(`Selecting note ${payload}`);
             state.selectedNote = payload;
         }
     },

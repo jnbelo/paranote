@@ -38,8 +38,8 @@ contextBridge.exposeInMainWorld('sourcesRepo', {
             version: meta.version
         };
     },
-    close: async (id: string) => {
+    close: async (id: string): Promise<void> => {
         logger.debug('Context bridge: Closing a database');
-        await databases.close(id);
+        return databases.close(id);
     }
 });

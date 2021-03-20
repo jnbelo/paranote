@@ -5,4 +5,5 @@ export interface TabProps {
     title: string;
     icon: IconProp;
     children?: React.ReactElement;
+    onSelect?: () => void;
 }
