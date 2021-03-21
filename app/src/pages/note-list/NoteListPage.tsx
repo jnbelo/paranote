@@ -1,22 +1,46 @@
 import './NoteListPage.scss';
+
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SplitPane from 'react-split-pane';
-import { selectSources } from '../../redux/selectors/sources.selectors';
-import List from '../../components/List/List';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { createNote } from '../../redux/thunks/notes.thunks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import List from '../../components/List/List';
+import TimeAgo from '../../components/TimeAgo/TimeAgo';
 import { selectNotes, selectSource } from '../../redux/selectors/ui.selectors';
+import { RootState } from '../../redux/store';
+import { createNote } from '../../redux/thunks/notes.thunks';
+import { OrderBy } from '../../redux/interfaces/ui.interfaces';
+import { orderNotesBy } from '../../redux/slices/ui.slice';
 
 export default function NoteListPage(): JSX.Element {
     const dispatch = useDispatch();
     const selectedSource = useSelector(selectSource);
     const notes = useSelector(selectNotes);
+    const orderBy = useSelector((state: RootState) => state.ui.orderNotesBy);
 
     const onNewNoteClick = async () => {
         if (selectedSource) {
             await dispatch(createNote(selectedSource.id));
+        }
+    };
+
+    const onOrderByClick = (value: OrderBy) => {
+        dispatch(orderNotesBy(value));
+    };
+
+    const orderByToText = (value: OrderBy): string => {
+        switch (value) {
+            case 'createdAt':
+                return 'Creation';
+            case 'updatedAt':
+                return 'Update';
+            case 'title':
+                return 'Title';
+            default:
+                return 'None';
         }
     };
 
@@ -25,6 +49,31 @@ export default function NoteListPage(): JSX.Element {
             <div className="is-flex-direction-column is-fullheight">
                 <nav className="navbar" role="navigation" aria-label="main navigation">
                     <div className="navbar-menu">
+                        <div className="navbar-start">
+                            <div className="navbar-item has-dropdown is-hoverable">
+                                <a className="navbar-link">{orderByToText(orderBy)}</a>
+                                <div className="navbar-dropdown">
+                                    <a
+                                        onClick={() => onOrderByClick('createdAt')}
+                                        className="navbar-item"
+                                    >
+                                        {orderByToText('createdAt')}
+                                    </a>
+                                    <a
+                                        onClick={() => onOrderByClick('updatedAt')}
+                                        className="navbar-item"
+                                    >
+                                        {orderByToText('updatedAt')}
+                                    </a>
+                                    <a
+                                        onClick={() => onOrderByClick('title')}
+                                        className="navbar-item"
+                                    >
+                                        {orderByToText('title')}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         <div className="navbar-end">
                             <div className="navbar-item">
                                 <div className="buttons">
@@ -44,7 +93,13 @@ export default function NoteListPage(): JSX.Element {
                 </nav>
                 <List>
                     {notes.map((note, index) => (
-                        <div>{note.title}</div>
+                        <div className="is-flex-direction-column p-2 has-border-bottom-1">
+                            <h3 className="has-text-weight-semibold">{note.title}</h3>
+                            <div className="has-text-right is-size-7 is-italic">
+                                Created
+                                <TimeAgo timestamp={note.createdAt} />
+                            </div>
+                        </div>
                     ))}
                 </List>
             </div>

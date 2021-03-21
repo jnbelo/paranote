@@ -6,8 +6,12 @@
         "sourceType": "module",
         "project": "./tsconfig.*?.json"
     },
-    "ignorePatterns": ["**/*"],
-    "plugins": ["@typescript-eslint"],
+    "ignorePatterns": [
+        "**/*"
+    ],
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
@@ -21,7 +25,9 @@
     },
     "overrides": [
         {
-            "files": ["*.tsx"],
+            "files": [
+                "*.tsx"
+            ],
             "rules": {
                 "@typescript-eslint/no-unused-vars": "off"
             }

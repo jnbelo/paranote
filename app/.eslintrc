@@ -1,11 +1,20 @@
 {
     "rules": {
         "array-callback-return": "warn",
-        "dot-location": ["warn", "property"],
-        "eqeqeq": ["warn", "smart"],
+        "dot-location": [
+            "warn",
+            "property"
+        ],
+        "eqeqeq": [
+            "warn",
+            "smart"
+        ],
         "new-parens": "warn",
         "no-caller": "warn",
-        "no-cond-assign": ["warn", "except-parens"],
+        "no-cond-assign": [
+            "warn",
+            "except-parens"
+        ],
         "no-const-assign": "warn",
         "no-control-regex": "warn",
         "no-delete-var": "warn",
@@ -38,10 +47,33 @@
             "warn",
             {
                 "groups": [
-                    ["&", "|", "^", "~", "<<", ">>", ">>>"],
-                    ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
-                    ["&&", "||"],
-                    ["in", "instanceof"]
+                    [
+                        "&",
+                        "|",
+                        "^",
+                        "~",
+                        "<<",
+                        ">>",
+                        ">>>"
+                    ],
+                    [
+                        "==",
+                        "!=",
+                        "===",
+                        "!==",
+                        ">",
+                        ">=",
+                        "<",
+                        "<="
+                    ],
+                    [
+                        "&&",
+                        "||"
+                    ],
+                    [
+                        "in",
+                        "instanceof"
+                    ]
                 ],
                 "allowSamePrecedence": false
             }
@@ -58,7 +90,10 @@
         "no-octal-escape": "warn",
         "no-redeclare": "warn",
         "no-regex-spaces": "warn",
-        "no-restricted-syntax": ["warn", "WithStatement"],
+        "no-restricted-syntax": [
+            "warn",
+            "WithStatement"
+        ],
         "no-script-url": "warn",
         "no-self-assign": "warn",
         "no-self-compare": "warn",
@@ -148,9 +183,18 @@
         "no-whitespace-before-property": "warn",
         "react-hooks/exhaustive-deps": "warn",
         "require-yield": "warn",
-        "rest-spread-spacing": ["warn", "never"],
-        "strict": ["warn", "never"],
-        "unicode-bom": ["warn", "never"],
+        "rest-spread-spacing": [
+            "warn",
+            "never"
+        ],
+        "strict": [
+            "warn",
+            "never"
+        ],
+        "unicode-bom": [
+            "warn",
+            "never"
+        ],
         "use-isnan": "warn",
         "valid-typeof": "warn",
         "no-restricted-properties": [
@@ -200,12 +244,7 @@
         "jsx-a11y/accessible-emoji": "warn",
         "jsx-a11y/alt-text": "warn",
         "jsx-a11y/anchor-has-content": "warn",
-        "jsx-a11y/anchor-is-valid": [
-            "warn",
-            {
-                "aspects": ["noHref", "invalidHref"]
-            }
-        ],
+        "jsx-a11y/anchor-is-valid": "off",
         "jsx-a11y/aria-activedescendant-has-tabindex": "warn",
         "jsx-a11y/aria-props": "warn",
         "jsx-a11y/aria-proptypes": "warn",
@@ -269,7 +308,16 @@
             "version": "detect"
         }
     },
-    "plugins": ["import", "jsx-a11y", "react", "react-hooks"],
-    "extends": ["../.eslintrc"],
-    "ignorePatterns": ["!**/*"]
+    "plugins": [
+        "import",
+        "jsx-a11y",
+        "react",
+        "react-hooks"
+    ],
+    "extends": [
+        "../.eslintrc"
+    ],
+    "ignorePatterns": [
+        "!**/*"
+    ]
 }
