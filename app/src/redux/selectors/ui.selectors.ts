@@ -1,7 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { parseISO } from 'date-fns';
 import { compareDate, compareString } from '../../utils/compare.helper';
-import { Note } from '../interfaces/notes.interfaces';
 import { RootState } from '../store';
 
 export const selectSource = createSelector(
@@ -25,20 +24,22 @@ export const selectNotes = createSelector(
             return [];
         }
 
-        return notes[selected].allIds
-            .map((id) => notes[selected].byId[id])
-            .sort((a, b) => {
-                switch (orderBy) {
-                    case 'createdAt':
-                        return compareDate(parseISO(a.createdAt), parseISO(b.createdAt));
-                    case 'updatedAt':
-                        return compareDate(parseISO(a.updatedAt), parseISO(b.updatedAt));
-                    case 'title':
-                        return compareString(a.title, b.title);
-                    default:
-                        return 0;
-                }
-            });
+        return (
+            notes[selected]?.allIds
+                .map((id) => notes[selected].byId[id])
+                .sort((a, b) => {
+                    switch (orderBy) {
+                        case 'createdAt':
+                            return compareDate(parseISO(a.createdAt), parseISO(b.createdAt));
+                        case 'updatedAt':
+                            return compareDate(parseISO(a.updatedAt), parseISO(b.updatedAt));
+                        case 'title':
+                            return compareString(a.title, b.title);
+                        default:
+                            return 0;
+                    }
+                }) || []
+        );
     }
 );
 

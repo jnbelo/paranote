@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import log from '../../utils/logging';
 import { NotesBySource, NotesState } from '../interfaces/notes.interfaces';
 import { createNote, deleteNote, updateNote } from '../thunks/notes.thunks';
-import { loadSource, removeSource } from '../thunks/sources.thunks';
+import { createSource, loadSource, removeSource } from '../thunks/sources.thunks';
 
 const initialState: NotesState = {};
 
@@ -11,6 +11,9 @@ export const notesSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
+        builder.addCase(createSource.fulfilled, (state, { payload }) => {
+            state[payload.id] = { byId: {}, allIds: [] };
+        });
         builder.addCase(loadSource.fulfilled, (state, { payload }) => {
             log.info(`Loading saved ${payload.notes.length} notes for source ${payload.id}`);
             const notesBySource: NotesBySource = { byId: {}, allIds: [] };

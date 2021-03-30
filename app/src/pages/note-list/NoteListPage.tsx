@@ -13,7 +13,8 @@ import { selectNotes, selectSource } from '../../redux/selectors/ui.selectors';
 import { RootState } from '../../redux/store';
 import { createNote } from '../../redux/thunks/notes.thunks';
 import { OrderBy } from '../../redux/interfaces/ui.interfaces';
-import { orderNotesBy } from '../../redux/slices/ui.slice';
+import { orderNotesBy, selectNote } from '../../redux/slices/ui.slice';
+import NoteEditorPage from '../note-editor/NoteEditorPage';
 
 export default function NoteListPage(): JSX.Element {
     const dispatch = useDispatch();
@@ -29,6 +30,12 @@ export default function NoteListPage(): JSX.Element {
 
     const onOrderByClick = (value: OrderBy) => {
         dispatch(orderNotesBy(value));
+    };
+
+    const onSelectionChange = (index: number) => {
+        if (index >= 0 && index < notes.length) {
+            dispatch(selectNote(notes[index].id));
+        }
     };
 
     const orderByToText = (value: OrderBy): string => {
@@ -91,7 +98,7 @@ export default function NoteListPage(): JSX.Element {
                         </div>
                     </div>
                 </nav>
-                <List>
+                <List onSelectionChange={onSelectionChange}>
                     {notes.map((note, index) => (
                         <div className="is-flex-direction-column p-2 has-border-bottom-1">
                             <h3 className="has-text-weight-semibold">{note.title}</h3>
@@ -103,7 +110,7 @@ export default function NoteListPage(): JSX.Element {
                     ))}
                 </List>
             </div>
-            <div />
+            <NoteEditorPage />
         </SplitPane>
     );
 }
