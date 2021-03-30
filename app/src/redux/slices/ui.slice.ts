@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import * as logger from '../../providers/logging.context';
-import { OrderBy, UiState } from '../interfaces/ui.interfaces';
+import { SortBy, UiState } from '../interfaces/ui.interfaces';
 import { deleteNote } from '../thunks/notes.thunks';
 
 const initialState: UiState = {
-    orderNotesBy: 'createdAt'
+    sortNotesBy: 'createdAt'
 };
 
 export const uiSlice = createSlice({
@@ -20,9 +20,9 @@ export const uiSlice = createSlice({
             logger.info(`Selecting note ${payload}`);
             state.selectedNote = payload;
         },
-        orderNotesBy(state, { payload }: PayloadAction<OrderBy>) {
+        sortNotesBy(state, { payload }: PayloadAction<SortBy>) {
             logger.info(`Ordering notes by ${payload}`);
-            state.orderNotesBy = payload;
+            state.sortNotesBy = payload;
         }
     },
     extraReducers: (builder) => {
@@ -34,6 +34,6 @@ export const uiSlice = createSlice({
     }
 });
 
-export const { selectSource, selectNote, orderNotesBy } = uiSlice.actions;
+export const { selectSource, selectNote, sortNotesBy } = uiSlice.actions;
 
 export default uiSlice.reducer;

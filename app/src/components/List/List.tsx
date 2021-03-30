@@ -1,30 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './List.scss';
 import { ListProps } from './ListProps';
 
-export default function List({ children, onSelectionChange }: ListProps): JSX.Element {
+export default function List<T>({
+    items,
+    render,
+    sortBy,
+    onSelectionChange
+}: ListProps<T>): JSX.Element {
     const [selection, setSelection] = useState(-1);
+    const [sortedItems, setSortedItems] = useState(items);
 
-    const onItemClick = (index: number) => {
+    useEffect(() => {
+        setSortedItems(sortBy ? items.sort(sortBy) : items);
+    }, [sortBy, items]);
+
+    const onItemClick = (item: T, index: number) => {
         setSelection(index);
 
         if (onSelectionChange) {
-            onSelectionChange(index);
+            onSelectionChange(item, index);
         }
     };
 
     return (
         <div className="is-scrollable">
             <div className="is-flex is-flex-direction-column">
-                {children?.map((child, index) => (
+                {sortedItems.map((item, index) => (
                     <div
                         key={`item-${index}`}
                         className={`list-item ${
                             selection === index ? 'is-list-item-selected' : ''
                         }`}
-                        onClick={() => onItemClick(index)}
+                        onClick={() => onItemClick(item, index)}
                     >
-                        {child}
+                        {render(item)}
                     </div>
                 ))}
             </div>

@@ -12,15 +12,19 @@ import TimeAgo from '../../components/TimeAgo/TimeAgo';
 import { selectNotes, selectSource } from '../../redux/selectors/ui.selectors';
 import { RootState } from '../../redux/store';
 import { createNote } from '../../redux/thunks/notes.thunks';
-import { OrderBy } from '../../redux/interfaces/ui.interfaces';
-import { orderNotesBy, selectNote } from '../../redux/slices/ui.slice';
+import { sortNotesBy, selectNote } from '../../redux/slices/ui.slice';
 import NoteEditorPage from '../note-editor/NoteEditorPage';
+
+import { compareDate, compareString } from '../../utils/compare.helper';
+import { parseISO } from 'date-fns';
+import { SortBy } from '../../redux/interfaces/ui.interfaces';
+import { Note } from '../../redux/interfaces/notes.interfaces';
 
 export default function NoteListPage(): JSX.Element {
     const dispatch = useDispatch();
     const selectedSource = useSelector(selectSource);
     const notes = useSelector(selectNotes);
-    const orderBy = useSelector((state: RootState) => state.ui.orderNotesBy);
+    const sortBy = useSelector((state: RootState) => state.ui.sortNotesBy);
 
     const onNewNoteClick = async () => {
         if (selectedSource) {
@@ -28,17 +32,17 @@ export default function NoteListPage(): JSX.Element {
         }
     };
 
-    const onOrderByClick = (value: OrderBy) => {
-        dispatch(orderNotesBy(value));
+    const onOrderByClick = (value: SortBy) => {
+        dispatch(sortNotesBy(value));
     };
 
-    const onSelectionChange = (index: number) => {
-        if (index >= 0 && index < notes.length) {
-            dispatch(selectNote(notes[index].id));
+    const onSelectionChange = (note: Note, index: number) => {
+        if (note) {
+            dispatch(selectNote(note?.id));
         }
     };
 
-    const orderByToText = (value: OrderBy): string => {
+    const sortByToText = (value: SortBy): string => {
         switch (value) {
             case 'createdAt':
                 return 'Creation';
@@ -51,6 +55,16 @@ export default function NoteListPage(): JSX.Element {
         }
     };
 
+    const getSortBy = () => {
+        switch (sortBy) {
+            case 'createdAt':
+            case 'updatedAt':
+                return (a: Note, b: Note) => compareDate(parseISO(a[sortBy]), parseISO(b[sortBy]));
+            case 'title':
+                return (a: Note, b: Note) => compareString(a.title, b.title);
+        }
+    };
+
     return (
         <SplitPane split="vertical" minSize="10%" defaultSize="20%">
             <div className="is-flex-direction-column is-fullheight">
@@ -58,26 +72,20 @@ export default function NoteListPage(): JSX.Element {
                     <div className="navbar-menu">
                         <div className="navbar-start">
                             <div className="navbar-item has-dropdown is-hoverable">
-                                <a className="navbar-link">{orderByToText(orderBy)}</a>
+                                <a className="navbar-link">{sortByToText(sortBy)}</a>
+
                                 <div className="navbar-dropdown">
-                                    <a
-                                        onClick={() => onOrderByClick('createdAt')}
-                                        className="navbar-item"
-                                    >
-                                        {orderByToText('createdAt')}
-                                    </a>
-                                    <a
-                                        onClick={() => onOrderByClick('updatedAt')}
-                                        className="navbar-item"
-                                    >
-                                        {orderByToText('updatedAt')}
-                                    </a>
-                                    <a
-                                        onClick={() => onOrderByClick('title')}
-                                        className="navbar-item"
-                                    >
-                                        {orderByToText('title')}
-                                    </a>
+                                    {['createdAt', 'updatedAt', 'title']
+                                        .map((item) => item as SortBy)
+                                        .map((item) => (
+                                            <a
+                                                key={item}
+                                                onClick={() => onOrderByClick(item)}
+                                                className="navbar-item"
+                                            >
+                                                {sortByToText(item)}
+                                            </a>
+                                        ))}
                                 </div>
                             </div>
                         </div>
@@ -98,8 +106,11 @@ export default function NoteListPage(): JSX.Element {
                         </div>
                     </div>
                 </nav>
-                <List onSelectionChange={onSelectionChange}>
-                    {notes.map((note, index) => (
+                <List<Note>
+                    items={notes}
+                    sortBy={getSortBy()}
+                    onSelectionChange={onSelectionChange}
+                    render={(note) => (
                         <div className="is-flex-direction-column p-2 has-border-bottom-1">
                             <h3 className="has-text-weight-semibold">{note.title}</h3>
                             <div className="has-text-right is-size-7 is-italic">
@@ -107,8 +118,8 @@ export default function NoteListPage(): JSX.Element {
                                 <TimeAgo timestamp={note.createdAt} />
                             </div>
                         </div>
-                    ))}
-                </List>
+                    )}
+                />
             </div>
             <NoteEditorPage />
         </SplitPane>

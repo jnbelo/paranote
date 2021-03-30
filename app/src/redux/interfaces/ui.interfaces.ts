@@ -1,7 +1,7 @@
 export interface UiState {
     selectedSource?: string;
     selectedNote?: number;
-    orderNotesBy: OrderBy;
+    sortNotesBy: SortBy;
 }
 
-export type OrderBy = 'createdAt' | 'updatedAt' | 'title';
+export type SortBy = 'createdAt' | 'updatedAt' | 'title';

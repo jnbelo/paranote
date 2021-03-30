@@ -1,4 +1,6 @@
-export interface ListProps {
-    onSelectionChange?: (index: number) => void;
-    children?: React.ReactElement[];
+export interface ListProps<T> {
+    items: T[];
+    render: (item: T) => JSX.Element;
+    sortBy?: (a: T, b: T) => number;
+    onSelectionChange?: (item: T, index: number) => void;
 }
