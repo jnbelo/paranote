@@ -3,10 +3,13 @@ import * as notesContext from '../../providers/notes.context';
 import * as logger from '../../providers/logging.context';
 import { Note, NoteDelete, NoteUpdate } from '../interfaces/notes.interfaces';
 
+let index = 0;
+
 export const createNote = createAsyncThunk<Note, string>('notes/createNote', async (sourceId) => {
     logger.info(`Creating new note for source ${sourceId}`);
+    index++;
     const { id, createdAt, updatedAt, title, content } = await notesContext.create(sourceId, {
-        title: '(Untitled Note)',
+        title: '(Untitled Note #' + index + ')',
         content: ''
     });
     return {
@@ -36,6 +39,8 @@ export const updateNote = createAsyncThunk<Note, NoteUpdate>(
             title: newTitle,
             content: newContent
         });
+        console.log({ createdAt: createdAt.toISOString(), updatedAt: updatedAt.toISOString() });
+
         return {
             id,
             createdAt: createdAt.toISOString(),

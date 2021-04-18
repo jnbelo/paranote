@@ -4,24 +4,29 @@ import { RootState } from '../store';
 export const selectSource = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.entities.sources,
-    (selected, sources) => {
-        if (!selected || !sources.byId || !(selected in sources.byId)) {
+    (selectedSource, sources) => {
+        if (
+            selectedSource === undefined ||
+            selectedSource === null ||
+            !sources.byId ||
+            !(selectedSource in sources.byId)
+        ) {
             return null;
         }
 
-        return sources.byId[selected];
+        return sources.byId[selectedSource];
     }
 );
 
 export const selectNotes = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.entities.notes,
-    (selected, notes) => {
-        if (!selected) {
+    (selectedSource, notes) => {
+        if (selectedSource === undefined || selectedSource === null) {
             return [];
         }
 
-        return notes[selected]?.allIds.map((id) => notes[selected].byId[id]) || [];
+        return notes[selectedSource]?.allIds.map((id) => notes[selectedSource].byId[id]) || [];
     }
 );
 
@@ -30,7 +35,12 @@ export const selectNote = createSelector(
     (state: RootState) => state.ui.selectedNote,
     (state: RootState) => state.entities.notes,
     (selectedSource, selectedNote, notes) => {
-        if (!selectedSource || !selectedNote) {
+        if (
+            selectedSource === undefined ||
+            selectedSource === null ||
+            selectedNote === undefined ||
+            selectedNote === null
+        ) {
             return null;
         }
 

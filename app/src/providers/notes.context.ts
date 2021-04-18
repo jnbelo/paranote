@@ -1,4 +1,5 @@
-import { CreateNote, UpdateNote, Note } from '@paranote/common/src';
+import { CreateNote, Note, UpdateNote } from '@paranote/common/src';
+import { mockCreateNote, mockDeleteNote, mockGetAllNotes, mockUpdateNote } from './storage.mock';
 
 declare global {
     interface Window {
@@ -11,22 +12,12 @@ declare global {
     }
 }
 
-let counter = 0;
-const incrementCounter = () => {
-    return counter++;
-};
-
 export const create = async (databaseId: string, note: CreateNote): Promise<Note> => {
     if (window.notesRepo) {
         return await window.notesRepo.create(databaseId, note);
+    } else {
+        return mockCreateNote(databaseId, note);
     }
-
-    return {
-        ...note,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id: incrementCounter()
-    };
 };
 
 export const update = async (
@@ -36,26 +27,23 @@ export const update = async (
 ): Promise<Note> => {
     if (window.notesRepo) {
         return await window.notesRepo.update(databaseId, noteId, note);
+    } else {
+        return mockUpdateNote(databaseId, noteId, note);
     }
-
-    return {
-        id: noteId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...note
-    };
 };
 
 export const destroy = async (databaseId: string, noteId: number): Promise<void> => {
     if (window.notesRepo) {
         await window.notesRepo.destroy(databaseId, noteId);
+    } else {
+        mockDeleteNote(databaseId, noteId);
     }
 };
 
 export const getAll = async (databaseId: string): Promise<Note[]> => {
     if (window.notesRepo) {
         return await window.notesRepo.getAll(databaseId);
+    } else {
+        return mockGetAllNotes(databaseId);
     }
-
-    return [];
 };
