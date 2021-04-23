@@ -1,8 +1,8 @@
 import { debounce } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import AceEditor from 'react-ace';
 import { useDispatch, useSelector } from 'react-redux';
-import { Note } from '../../redux/interfaces/notes.interfaces';
+import { Note, NoteUpdate } from '../../redux/interfaces/notes.interfaces';
 import { selectNote } from '../../redux/selectors/ui.selectors';
 import { updateNote } from '../../redux/thunks/notes.thunks';
 
@@ -10,27 +10,33 @@ import 'ace-builds/src-noconflict/mode-markdown';
 import 'ace-builds/src-noconflict/theme-twilight';
 
 export default function NoteEditorPage(): JSX.Element {
+    const dispatch = useDispatch();
     const note = useSelector(selectNote);
 
-    const dispatch = useDispatch();
-    const debouncedSave = useCallback(
-        debounce((title: string, content: string, note: Note) => {
-            console.log({ title, content });
-            dispatch(
-                updateNote({
-                    id: note.id,
-                    content,
-                    title,
-                    sourceId: note.sourceId
-                })
-            );
-        }, 1000),
-        [note?.id]
+    const pendingUpdates = useRef<{ [key: string]: NoteUpdate }>({});
+    const debouncedUpdate = useRef(
+        debounce(() => {
+            Object.keys(pendingUpdates.current).forEach((key) => {
+                const update = pendingUpdates.current[key];
+                dispatch(updateNote(update));
+            });
+            pendingUpdates.current = {};
+        }, 1000)
     );
+    const debouncedSave = useRef((title: string, content: string, note: Note) => {
+        pendingUpdates.current[note.sourceId + '_' + note.id] = {
+            id: note.id,
+            content,
+            title,
+            sourceId: note.sourceId
+        };
+
+        debouncedUpdate.current();
+    });
 
     function handleContentChange(value: string) {
         if (note) {
-            debouncedSave(note.title, value, note);
+            debouncedSave.current(note.title, value, note);
         }
     }
 
