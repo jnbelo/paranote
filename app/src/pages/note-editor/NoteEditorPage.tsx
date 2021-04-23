@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import AceEditor from 'react-ace';
 import { useDispatch, useSelector } from 'react-redux';
 import { Note, NoteUpdate } from '../../redux/interfaces/notes.interfaces';
