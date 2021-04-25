@@ -1,7 +1,8 @@
 import { debounce } from 'lodash';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import AceEditor from 'react-ace';
 import { useDispatch, useSelector } from 'react-redux';
+import TextField from '../../components/TextField/TextField';
 import { Note, NoteUpdate } from '../../redux/interfaces/notes.interfaces';
 import { selectNote } from '../../redux/selectors/ui.selectors';
 import { updateNote } from '../../redux/thunks/notes.thunks';
@@ -34,6 +35,38 @@ export default function NoteEditorPage(): JSX.Element {
         debouncedUpdate.current();
     });
 
+    const [editTitle, setEditTitle] = useState<boolean>(false);
+
+    function handleTitleClick() {
+        if (!editTitle) {
+            setEditTitle(true);
+        }
+    }
+
+    function handleTitleChange(value: string) {
+        if (note) {
+            dispatch(
+                updateNote({
+                    id: note.id,
+                    content: note.content,
+                    title: value,
+                    sourceId: note.sourceId
+                })
+            );
+            debouncedSave.current(value, note.content, note);
+        }
+
+        if (editTitle) {
+            setEditTitle(false);
+        }
+    }
+
+    function handleTitleCancel() {
+        if (editTitle) {
+            setEditTitle(false);
+        }
+    }
+
     function handleContentChange(value: string) {
         if (note) {
             debouncedSave.current(note.title, value, note);
@@ -47,8 +80,20 @@ export default function NoteEditorPage(): JSX.Element {
                     <nav className="level">
                         <div className="level-left">
                             <div className="level-item">
-                                <p className="subtitle is-5">
-                                    <strong>{note.title}</strong>
+                                <p
+                                    className="subtitle is-5 is-clickable"
+                                    onClick={handleTitleClick}
+                                >
+                                    {editTitle ? (
+                                        <TextField
+                                            autoFocus={true}
+                                            value={note.title}
+                                            onSubmit={handleTitleChange}
+                                            onCancel={handleTitleCancel}
+                                        />
+                                    ) : (
+                                        <strong>{note.title}</strong>
+                                    )}
                                 </p>
                             </div>
                         </div>
