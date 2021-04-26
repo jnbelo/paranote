@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
 import App from './App';
-import { GlobalStyle } from './index.styles.jsx';
 import store from './redux/store';
 
 const theme = {
