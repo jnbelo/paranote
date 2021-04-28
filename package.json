@@ -13,7 +13,6 @@
         "electron"
     ],
     "scripts": {
-        "postinstall": "electron-builder install-app-deps",
         "start:web": "yarn workspace @paranote/app start",
         "start:electron": "yarn workspace @paranote/electron start",
         "start:dev": "concurrently \"cross-env BROWSER=none yarn workspace @paranote/app start\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development yarn workspace @paranote/electron start\"",
@@ -22,10 +21,7 @@
         "package": "yarn build && electron-builder --publish never",
         "release": "yarn build && electron-builder --publish always"
     },
-    "dependencies": {
-        "@testing-library/jest-dom": "^5.12.0",
-        "@testing-library/react": "^11.2.6",
-        "@testing-library/user-event": "^13.1.5",
+    "devDependencies": {
         "@types/jest": "^26.0.23",
         "@types/lodash": "^4.14.168",
         "@types/react": "^17.0.4",
@@ -42,6 +38,7 @@
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^3.4.0",
         "prettier": "^2.2.1",
+        "typescript": "^4.2.4",
         "wait-on": "^5.3.0"
     }
 }

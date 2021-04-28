@@ -27,3 +27,12 @@ yarn-error.log*
 *.parax
 
 .vscode
+
+#yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
