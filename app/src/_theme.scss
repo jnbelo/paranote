@@ -1,11 +1,13 @@
 $color-blue: #0e639c;
 $color-light-grey: #cccccc;
+$color-medium-grey: #363636;
 $color-darkish-grey: #252526;
 $color-dark-grey: #1e1e1e;
 
-$body-background-color: $color-dark-grey;
+$body-background-color: $color-darkish-grey;
 $primary: $color-blue;
 $text: $color-light-grey;
+$grey-dark: $color-dark-grey;
 
 /* Content */
 $content-heading-color: $color-light-grey;
@@ -20,3 +22,16 @@ $list-border-color: $color-light-grey;
 
 /* Navbar */
 $navbar-background-color: $color-darkish-grey;
+
+/* Tabs */
+$tabs-boxed-link-radius: 0px;
+$tabs-boxed-link-hover-background-color: $color-dark-grey;
+$tabs-boxed-link-active-background-color: $color-dark-grey;
+$tabs-boxed-link-active-border-color: $color-dark-grey;
+$tabs-boxed-link-active-border-bottom-color: $color-dark-grey;
+$tabs-border-bottom-style: none;
+$tabs-link-active-color: $color-light-grey;
+
+/* Select */
+$label-color: $color-light-grey;
+$label-weight: 400;

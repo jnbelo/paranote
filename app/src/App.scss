@@ -2,6 +2,12 @@
 @import '_theme.scss';
 @import '../../node_modules/bulma/bulma.sass';
 
+html,
+body,
+#root {
+    height: 100%;
+}
+
 .is-fullheight {
     height: 100%;
 }

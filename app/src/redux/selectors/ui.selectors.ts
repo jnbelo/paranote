@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-export const selectSource = createSelector(
+export const selectedSourceSelector = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.entities.sources,
     (selectedSource, sources) => {

@@ -1,0 +1,7 @@
+@import '../../_theme.scss';
+
+.select > select {
+    border-color: $color-medium-grey !important;
+    background-color: $color-darkish-grey !important;
+    color: $color-light-grey !important;
+}
