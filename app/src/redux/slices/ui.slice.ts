@@ -11,12 +11,12 @@ export const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
-        selectSource(state, { payload }: PayloadAction<string>) {
+        selectSource(state, { payload }: PayloadAction<string | null | undefined>) {
             logger.info(`Selecting source ${payload}`);
             state.selectedSource = payload;
             delete state.selectedNote;
         },
-        selectNote(state, { payload }: PayloadAction<number>) {
+        selectNote(state, { payload }: PayloadAction<number | null | undefined>) {
             logger.info(`Selecting note ${payload}`);
             state.selectedNote = payload;
         },

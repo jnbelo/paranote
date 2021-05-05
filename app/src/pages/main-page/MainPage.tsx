@@ -7,7 +7,7 @@ import Tab from '../../components/Tabs/Tab';
 import Tabs from '../../components/Tabs/Tabs';
 import { Source } from '../../redux/interfaces/sources.interfaces';
 import { selectSources } from '../../redux/selectors/sources.selectors';
-import { selectedSourceSelector } from '../../redux/selectors/ui.selectors';
+import { selectSelectedSource } from '../../redux/selectors/ui.selectors';
 import { selectSource } from '../../redux/slices/ui.slice';
 import { removeSource } from '../../redux/thunks/sources.thunks';
 import NoteListPage from '../note-list/NoteListPage';
@@ -15,7 +15,7 @@ import NoteListPage from '../note-list/NoteListPage';
 export default function MainPage(): JSX.Element {
     const dispatch = useDispatch();
     const sources = useSelector(selectSources);
-    const selectedSource = useSelector(selectedSourceSelector);
+    const selectedSource = useSelector(selectSelectedSource);
 
     useEffect(() => {
         dispatch(selectSource(sources[0].id));

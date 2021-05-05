@@ -1,29 +1,28 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { parseISO } from 'date-fns';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SplitPane from 'react-split-pane';
 import List from '../../components/List/List';
 import Select from '../../components/Select/Select';
 import TimeAgo from '../../components/TimeAgo/TimeAgo';
-import { Note } from '../../redux/interfaces/notes.interfaces';
+import { areSameNotes, Note } from '../../redux/interfaces/notes.interfaces';
 import { SortBy } from '../../redux/interfaces/ui.interfaces';
-import { selectedSourceSelector, selectNotes } from '../../redux/selectors/ui.selectors';
+import {
+    selectSelectedSource,
+    selectSelectedSourceNotes
+} from '../../redux/selectors/ui.selectors';
 import { selectNote, sortNotesBy } from '../../redux/slices/ui.slice';
-import { RootState } from '../../redux/store';
 import { createNote } from '../../redux/thunks/notes.thunks';
-import { compareDate, compareString } from '../../utils/compare.helper';
 import NoteEditorPage from '../note-editor/NoteEditorPage';
 import './NoteListPage.scss';
 
 export default function NoteListPage(): JSX.Element {
     const dispatch = useDispatch();
-    const selectedSource = useSelector(selectedSourceSelector);
-    const notes = useSelector(selectNotes);
-    const sortBy = useSelector((state: RootState) => state.ui.sortNotesBy);
+    const selectedSource = useSelector(selectSelectedSource);
+    const notes = useSelector(selectSelectedSourceNotes);
 
-    const onNewNoteClick = async () => {
+    const handleNewNoteClick = async () => {
         if (selectedSource) {
             await dispatch(createNote(selectedSource.id));
         }
@@ -33,10 +32,8 @@ export default function NoteListPage(): JSX.Element {
         dispatch(sortNotesBy(value as SortBy));
     };
 
-    const onSelectionChange = (note: Note, index: number) => {
-        if (note) {
-            dispatch(selectNote(note?.id));
-        }
+    const handleSelectionChange = (note: Note | null, index: number) => {
+        dispatch(selectNote(note?.id));
     };
 
     const sortByToText = (value: SortBy | string): string => {
@@ -49,16 +46,6 @@ export default function NoteListPage(): JSX.Element {
                 return 'Title';
             default:
                 return 'None';
-        }
-    };
-
-    const getSortBy = () => {
-        switch (sortBy) {
-            case 'createdAt':
-            case 'updatedAt':
-                return (a: Note, b: Note) => compareDate(parseISO(a[sortBy]), parseISO(b[sortBy]));
-            case 'title':
-                return (a: Note, b: Note) => compareString(a.title, b.title);
         }
     };
 
@@ -83,7 +70,7 @@ export default function NoteListPage(): JSX.Element {
                             <div className="buttons">
                                 <button
                                     className="button is-small is-primary"
-                                    onClick={onNewNoteClick}
+                                    onClick={handleNewNoteClick}
                                 >
                                     <span className="icon is-small">
                                         <FontAwesomeIcon icon={faPlus} />
@@ -96,8 +83,8 @@ export default function NoteListPage(): JSX.Element {
                 </nav>
                 <List<Note>
                     items={notes}
-                    sortBy={getSortBy()}
-                    onSelectionChange={onSelectionChange}
+                    areSame={areSameNotes}
+                    onSelectionChange={handleSelectionChange}
                     render={(note) => (
                         <div className="is-flex-direction-column p-2 has-border-bottom-1">
                             <h3 className="has-text-weight-semibold">{note.title}</h3>

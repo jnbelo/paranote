@@ -1,6 +1,6 @@
 export interface UiState {
-    selectedSource?: string;
-    selectedNote?: number;
+    selectedSource?: string | null | undefined;
+    selectedNote?: number | null | undefined;
     sortNotesBy: SortBy;
 }
 

@@ -10,7 +10,7 @@ import SplitPane from 'react-split-pane';
 import ButtonToggle from '../../components/ButtonToggle/ButtonToggle';
 import TextField from '../../components/TextField/TextField';
 import { Note, NoteUpdate } from '../../redux/interfaces/notes.interfaces';
-import { selectNote } from '../../redux/selectors/ui.selectors';
+import { selectSelectedNote } from '../../redux/selectors/ui.selectors';
 import { updateNote } from '../../redux/thunks/notes.thunks';
 import './NoteEditorPage.scss';
 
@@ -19,7 +19,7 @@ import 'ace-builds/src-noconflict/theme-twilight';
 
 export default function NoteEditorPage(): JSX.Element {
     const dispatch = useDispatch();
-    const note = useSelector(selectNote);
+    const note = useSelector(selectSelectedNote);
 
     const pendingUpdates = useRef<{ [key: string]: NoteUpdate }>({});
     const debouncedUpdate = useRef(

@@ -3,36 +3,53 @@ import './List.scss';
 import { ListProps } from './ListProps';
 
 export default function List<T>({
-    items,
+    items: initialItems,
+    areSame,
     render,
-    sortBy,
     onSelectionChange
 }: ListProps<T>): JSX.Element {
-    const [selection, setSelection] = useState(-1);
-    const [sortedItems, setSortedItems] = useState(items);
+    const [selection, setSelection] = useState<{
+        index: number;
+        item: T | undefined | null;
+    } | null>();
+    const [items, setItems] = useState(initialItems);
 
     useEffect(() => {
-        setSortedItems(sortBy ? items.sort(sortBy) : items);
-    }, [sortBy, items]);
+        setItems(initialItems);
 
-    const onItemClick = (item: T, index: number) => {
-        setSelection(index);
+        if (selection?.item) {
+            const itemIndex = initialItems.findIndex((i) => areSame(i, selection.item));
+
+            if (itemIndex > -1 && itemIndex !== selection.index) {
+                selectItem(initialItems[itemIndex], itemIndex);
+            } else if (itemIndex == -1) {
+                selectItem(null, -1);
+            }
+        }
+    }, [initialItems]);
+
+    function selectItem(item: T | null, index: number) {
+        if (!item) {
+            setSelection(null);
+        } else {
+            setSelection({ index, item });
+        }
 
         if (onSelectionChange) {
             onSelectionChange(item, index);
         }
-    };
+    }
 
     return (
         <div className="is-scrollable">
             <div className="is-flex is-flex-direction-column">
-                {sortedItems.map((item, index) => (
+                {items.map((item, index) => (
                     <div
                         key={`item-${index}`}
                         className={`list-item ${
-                            selection === index ? 'is-list-item-selected' : ''
+                            selection?.index === index ? 'is-list-item-selected' : ''
                         }`}
-                        onClick={() => onItemClick(item, index)}
+                        onClick={() => selectItem(item, index)}
                     >
                         {render(item)}
                     </div>

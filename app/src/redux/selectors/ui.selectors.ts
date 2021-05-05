@@ -1,7 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
+import { parseISO } from 'date-fns';
+import { compareDate, compareString } from '../../utils/compare.helper';
+import { Note } from '../interfaces/notes.interfaces';
+import { SortBy } from '../interfaces/ui.interfaces';
 import { RootState } from '../store';
 
-export const selectedSourceSelector = createSelector(
+export const selectSelectedSource = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.entities.sources,
     (selectedSource, sources) => {
@@ -18,19 +22,27 @@ export const selectedSourceSelector = createSelector(
     }
 );
 
-export const selectNotes = createSelector(
+export const selectSelectedSourceNotes = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.entities.notes,
-    (selectedSource, notes) => {
+    (state: RootState) => state.ui.sortNotesBy,
+    (selectedSource, notes, sortBy) => {
         if (selectedSource === undefined || selectedSource === null) {
             return [];
         }
 
-        return notes[selectedSource]?.allIds.map((id) => notes[selectedSource].byId[id]) || [];
+        const unsortedNotes =
+            notes[selectedSource]?.allIds.map((id) => notes[selectedSource].byId[id]) || [];
+
+        if (sortBy && unsortedNotes.length) {
+            return unsortedNotes.sort(compare(sortBy));
+        }
+
+        return unsortedNotes;
     }
 );
 
-export const selectNote = createSelector(
+export const selectSelectedNote = createSelector(
     (state: RootState) => state.ui.selectedSource,
     (state: RootState) => state.ui.selectedNote,
     (state: RootState) => state.entities.notes,
@@ -47,3 +59,13 @@ export const selectNote = createSelector(
         return notes[selectedSource].byId[selectedNote];
     }
 );
+
+const compare = (sortBy: SortBy) => {
+    switch (sortBy) {
+        case 'createdAt':
+        case 'updatedAt':
+            return (a: Note, b: Note) => compareDate(parseISO(a[sortBy]), parseISO(b[sortBy]));
+        case 'title':
+            return (a: Note, b: Note) => compareString(a.title, b.title);
+    }
+};
