@@ -4,6 +4,7 @@ import { ListProps } from './ListProps';
 
 export default function List<T>({
     items: initialItems,
+    className,
     areSame,
     render,
     onSelectionChange
@@ -41,7 +42,7 @@ export default function List<T>({
     }
 
     return (
-        <div className="is-scrollable">
+        <div className={`is-scrollable${className ? ` ${className}` : ''}`}>
             <div className="is-flex is-flex-direction-column">
                 {items.map((item, index) => (
                     <div

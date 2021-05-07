@@ -2,6 +2,7 @@ import { CreateNote, CreateSource, LoadSource, Note, Source, UpdateNote } from '
 import { remove } from 'lodash';
 import { v4 } from 'uuid';
 
+let index = 0;
 const sources: { [location: string]: Source } = {};
 const notes: { [sourceId: string]: Note[] } = {};
 
@@ -35,7 +36,7 @@ export function mockCreateNote(sourceId: string, noteData: CreateNote): Note {
         ...noteData,
         createdAt: new Date(),
         updatedAt: new Date(),
-        id: notes[sourceId].length
+        id: ++index
     };
 
     notes[sourceId].push(newNote);
@@ -48,7 +49,12 @@ export function mockUpdateNote(sourceId: string, noteId: number, noteData: Updat
         throw new Error(`Source '${sourceId}' was not found`);
     }
 
-    const note = notes[sourceId][noteId];
+    const note = notes[sourceId].find((n) => n.id === noteId);
+
+    if (!note) {
+        throw new Error(`Note ${noteId} was not found in source ${sourceId}`);
+    }
+
     note.title = noteData.title;
     note.content = noteData.content;
     note.updatedAt = new Date();

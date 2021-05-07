@@ -20,7 +20,10 @@ export const notesSlice = createSlice({
 
             state[payload.id] = payload.notes.reduce((source, note) => {
                 source.byId[note.id] = note;
-                source.allIds.push(note.id);
+                if (!source.allIds.includes(note.id)) {
+                    source.allIds.push(note.id);
+                }
+
                 return source;
             }, notesBySource);
         });
@@ -31,13 +34,15 @@ export const notesSlice = createSlice({
         builder.addCase(createNote.fulfilled, (state, { payload }) => {
             logger.info(`Saving note ${payload.title} in source ${payload.sourceId}`);
             state[payload.sourceId].byId[payload.id] = payload;
-            state[payload.sourceId].allIds.push(payload.id);
+            if (!state[payload.sourceId].allIds.includes(payload.id)) {
+                state[payload.sourceId].allIds.push(payload.id);
+            }
         });
         builder.addCase(deleteNote.fulfilled, (state, { payload }) => {
             const { sourceId, noteId } = payload;
             logger.info(`Deleting note ${noteId} in source ${sourceId}`);
             delete state[sourceId].byId[noteId];
-            state[sourceId].allIds = state[sourceId].allIds.filter((id) => id !== noteId);
+            state[sourceId].allIds.splice(state[sourceId].allIds.indexOf(noteId), 1);
         });
         builder.addCase(updateNote.fulfilled, (state, { payload }) => {
             logger.info(`Updating note ${payload.id} in source ${payload.sourceId}`);

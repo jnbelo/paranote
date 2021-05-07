@@ -1,4 +1,4 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,11 +9,12 @@ import TimeAgo from '../../components/TimeAgo/TimeAgo';
 import { areSameNotes, Note } from '../../redux/interfaces/notes.interfaces';
 import { SortBy } from '../../redux/interfaces/ui.interfaces';
 import {
+    selectSelectedNote,
     selectSelectedSource,
     selectSelectedSourceNotes
 } from '../../redux/selectors/ui.selectors';
 import { selectNote, sortNotesBy } from '../../redux/slices/ui.slice';
-import { createNote } from '../../redux/thunks/notes.thunks';
+import { createNote, deleteNote } from '../../redux/thunks/notes.thunks';
 import NoteEditorPage from '../note-editor/NoteEditorPage';
 import './NoteListPage.scss';
 
@@ -21,10 +22,17 @@ export default function NoteListPage(): JSX.Element {
     const dispatch = useDispatch();
     const selectedSource = useSelector(selectSelectedSource);
     const notes = useSelector(selectSelectedSourceNotes);
+    const selectedNote = useSelector(selectSelectedNote);
 
     const handleNewNoteClick = async () => {
         if (selectedSource) {
             await dispatch(createNote(selectedSource.id));
+        }
+    };
+
+    const handleDeleteNoteClick = async () => {
+        if (selectedNote && selectedSource) {
+            await dispatch(deleteNote({ noteId: selectedNote.id, sourceId: selectedSource.id }));
         }
     };
 
@@ -50,8 +58,13 @@ export default function NoteListPage(): JSX.Element {
     };
 
     return (
-        <SplitPane split="vertical" minSize="10%" defaultSize="20%">
-            <div className="is-flex-direction-column is-fullheight">
+        <SplitPane
+            split="vertical"
+            minSize="10%"
+            defaultSize="20%"
+            style={{ position: 'relative' }}
+        >
+            <div className="is-flex is-flex-direction-column is-fullheight">
                 <nav className="level p-3 m-0">
                     <div className="level-left">
                         <div className="level-item">
@@ -82,6 +95,7 @@ export default function NoteListPage(): JSX.Element {
                     </div>
                 </nav>
                 <List<Note>
+                    className="is-flex-grow-1"
                     items={notes}
                     areSame={areSameNotes}
                     onSelectionChange={handleSelectionChange}
@@ -95,6 +109,22 @@ export default function NoteListPage(): JSX.Element {
                         </div>
                     )}
                 />
+                <nav className="level p-2">
+                    <div className="level-left"></div>
+                    <div className="level-right">
+                        <div className="level-item">
+                            <button
+                                className="button is-text"
+                                disabled={!selectedNote}
+                                onClick={handleDeleteNoteClick}
+                            >
+                                <span className="icon is-small">
+                                    <FontAwesomeIcon icon={faTrash} />
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
             </div>
             <NoteEditorPage />
         </SplitPane>
